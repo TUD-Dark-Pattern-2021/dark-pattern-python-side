@@ -2,3 +2,7 @@
 testing01.csv
 output01.csv
 __pycache__/
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
