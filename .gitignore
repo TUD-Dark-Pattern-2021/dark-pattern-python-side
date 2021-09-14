@@ -1,3 +1,4 @@
 .idea/
 testing01.csv
 output01.csv
+__pycache__/

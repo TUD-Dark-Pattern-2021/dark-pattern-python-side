@@ -34,6 +34,32 @@ The 'Pipeline.py' is the detection process, from web scrapping --- dark pattern 
 
 `category_CountVectorizer.joblib` is the category countverctorizer for content preprocessing.
 
+# Usage
+run ``` python Pipeline.py ```
+
+## Api: 
+### name: ``` /api/parse ```
+### params @dict
+* content: Array*
+* key: Array
+### Return @json
+eg:
+```json
+{
+    "items_counts": {
+        "3": 1
+    },
+    "details": [
+        {
+            "content": "LAST CHANCE ITEMS",
+            "key": "AKIAX4DWMQK2GILTOxx",
+            "category": 3,
+            "category_name": "Scarcity"
+        }
+    ]
+}
+```
+
 
 
 
