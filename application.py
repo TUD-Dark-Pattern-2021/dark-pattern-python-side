@@ -21,14 +21,14 @@ import joblib
 from flask import Flask, request, Response
 import json
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 def say_hello(username = "World"):
     return '<p>Hello %s!</p>\n' % username
 
-app.add_url_rule('/', 'index', (lambda: say_hello()))
+application.add_url_rule('/', 'index', (lambda: say_hello()))
 
-@app.route('/api/parse',methods = ['POST'])
+@application.route('/api/parse',methods = ['POST'])
 def parse():
     data = request.get_data()
     j_data = json.loads(data)
@@ -95,7 +95,7 @@ def parse():
     return Response(json.dumps(return_result), mimetype='application/json')
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   application.run(debug = True)
 # -----------------------------------
 
 # url = 'https://outfithustler.com/collections/women-fashion?gclid=EAIaIQobChMIx_r5nM_o8QIVKYBQBh3fGwWvEAAYAiAAEgJYEvD_BwE&page=1'
