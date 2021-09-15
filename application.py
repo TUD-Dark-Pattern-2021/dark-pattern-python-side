@@ -28,6 +28,7 @@ def say_hello(username = "World"):
 
 application.add_url_rule('/', 'index', (lambda: say_hello()))
 
+
 @application.route('/api/parse',methods = ['POST'])
 def parse():
     data = request.get_data()
