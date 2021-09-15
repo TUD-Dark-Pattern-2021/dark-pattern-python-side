@@ -9,10 +9,10 @@ import json
 
 application = Flask(__name__)
 
-# def say_hello(username = "World"):
-   # return '<p>Hello %s!</p>\n' % username
+def say_hello(username = "Roger's World"):
+   return '<p>Hello %s!</p>\n' % username
 
-# application.add_url_rule('/', 'index', (lambda: say_hello()))
+application.add_url_rule('/', 'index', (lambda: say_hello()))
 
 
 @application.route('/api/parse',methods = ['POST'])
@@ -68,80 +68,24 @@ def parse():
     # get the list of the dark patterns detected with the frequency count
 
     counts = dark['category'].value_counts()
-    for index,name in enumerate(counts.index.tolist()):
-        return_result["items_counts"][int(name)] =int(counts.values[index])
+    # for index,name in enumerate(counts.index.tolist()):
+        # return_result["items_counts"][int(name)] =int(counts.values[index])
 
-    for index, value in enumerate(dark['category'], start=0):
+    category = counts.keys().tolist()
+    number = counts.tolist()
+    for i in range(len(category)):
+        return_result["items_counts"][category[i]] = number[i]
+
+    for j in range(len(dark)):
         return_result["details"].append({
-            "content": dark['content'][index],
-            "key": dark['key'][index],
-            "category": int(dark['category'][index]),
-            "category_name": dark['category_name'][index]
+            "content": dark['content'][j],
+            "key": dark['key'][j],
+            "category": int(dark['category'][j]),
+            "category_name": dark['category_name'][j]
         })
     print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')
 
 if __name__ == '__main__':
    application.run(debug = True)
-# -----------------------------------
-
-# url = 'https://outfithustler.com/collections/women-fashion?gclid=EAIaIQobChMIx_r5nM_o8QIVKYBQBh3fGwWvEAAYAiAAEgJYEvD_BwE&page=1'
-#
-# # to avoid opening browser while using selenium
-# option = webdriver.ChromeOptions()
-# option.add_argument('headless')
-# driver = webdriver.Chrome(ChromeDriverManager().install(),options=option)
-#
-# driver.get(url)
-# time.sleep(1)
-#
-# # get source code -- type: str
-# html_source = driver.page_source
-#
-# # key
-# html = lxml.html.fromstring(html_source)
-#
-# # obtain all the text under the 'div' tags
-# items = html.xpath("//div//text()")
-#
-# pattern = re.compile("^\s+|\s+$|\n")
-#
-# clause_text = ""
-#
-# for item in items:
-#     line = re.sub(pattern, "", item)
-#     if len(item) > 1:
-#         clause_text += line +"\n"
-#
-# driver.quit()
-#
-# # -------------------------------------------
-#
-# raw_text = clause_text
-#
-#
-# # the beginning character of the content, which is the sign we should ignore the content
-# ignore_str = ',.;{}'
-#
-# # the content we are going to keep to send to models.
-# content_list = []
-#
-# # only keep the content that has words count from 2 to 50 (includes).
-# for line in raw_text.split('\n'):
-#     if 1<len(line.split())<=50 and line[0] not in ignore_str:
-#         content_list.append([line])
-#
-# header = ['content']
-
-# create a csv file to save the filtered content for later model analysis.
-# with open('testing01.csv', 'w', encoding='UTF8', newline='') as f:
-#     writer = csv.writer(f)
-#
-#     # write the header
-#     writer.writerow(header)
-#
-#     # write the data
-#     writer.writerows(content_list)
-
-
 

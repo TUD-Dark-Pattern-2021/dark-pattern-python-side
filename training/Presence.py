@@ -24,226 +24,274 @@ from sklearn.metrics import confusion_matrix
 # joblib is a set of tools to provide lightweight pipelining in Python. It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
 
-# import matplotlib.pyplot as plt
-# import seaborn as sns
+from flask import Flask, request, Response
 
-# -----------------------------------------------------
-normie = pd.read_csv('normie.csv')
-princeton = pd.read_csv('dark_patterns.csv')
+import tempfile
+import boto3
+### from sagemaker import get_execution_role
 
 
-# check the distribution of the target value --- classification.
+application = Flask(__name__)
 
-print(normie['classification'].value_counts())
+def say_hello(username = "Roger's World"):
+   return '<p>Hello %s!</p>\n' % username
 
- # remove the instances with NULL value of 'Pattern String' and 'classification', which will be the input of our model.
+application.add_url_rule('/', 'index', (lambda: say_hello()))
 
-normie = normie[pd.notnull(normie["Pattern String"])]
-normie = normie[pd.notnull(normie["classification"])]
 
-# check the final distribution of the classification after removing the rows with NULL values.
+@application.route('/api/parse',methods = ['POST'])
+def parse():
+    # From S3 to grab csv file.
+    ### role = get_execution_role()
+    bucket = 'sagemaker-studio-f7awhpmeke'
+    categoryDF_key = 'dark_patterns.csv'
+    categoryDF_location = 's3://{}/{}'.format(bucket, categoryDF_key)
 
-print(normie['classification'].value_counts())
+    presenceDF_key = 'dark_patterns.csv'
+    presenceDF_location = 's3://{}/{}'.format(bucket, presenceDF_key)
 
-normie = normie[normie["classification"] == 0]
+    presence = pd.read_csv(presenceDF_location)
+    princeton = pd.read_csv(categoryDF_location)
 
+    # ---------------------     Data Exploration     --------------------------------------
+    # check the distribution of the target value --- classification.
+    print(presence['classification'].value_counts())
 
-normie["classification"] = "Not Dark"
+    # remove the instances with NULL value of 'Pattern String' and 'classification', which will be the input of our model.
 
- # For later training the model, we should remove the duplicate input to reduce overfitting.
+    presence = presence[pd.notnull(presence["Pattern String"])]
+    presence = presence[pd.notnull(presence["classification"])]
 
-normie = normie.drop_duplicates(subset="Pattern String")
+    # check the final distribution of the classification after removing the rows with NULL values.
 
- # remove the rows where there are NULL values in 'Pattern String' or 'Pattern Category' columns.
+    print(presence['classification'].value_counts())
 
-princeton = princeton[pd.notnull(princeton["Pattern String"])]
-princeton = princeton[pd.notnull(princeton["Pattern Category"])]
+    presence = presence[presence["classification"] == 0]
 
-# create a column named 'classification' and give all the values to be 'Dark', to match with the normie dataset.
+    # -----------------------        Data Preparation     ------------------------------------
+    presence["classification"] = "Not Dark"
 
-princeton["classification"] = "Dark"
+     # For later training the model, we should remove the duplicate input to reduce overfitting.
 
- # For later training the model, we should remove the duplicate input to reduce overfitting.
+    presence = presence.drop_duplicates(subset="Pattern String")
 
-princeton = princeton.drop_duplicates(subset="Pattern String")
+     # remove the rows where there are NULL values in 'Pattern String' or 'Pattern Category' columns.
 
- # Subset the princeton dataset for joining with normie dataset.
+    princeton = princeton[pd.notnull(princeton["Pattern String"])]
+    princeton = princeton[pd.notnull(princeton["Pattern Category"])]
 
-cols = ["Pattern String", "classification"]
-princeton = princeton[cols]
+    # create a column named 'classification' and give all the values to be 'Dark', to match with the normie dataset.
 
-df = pd.concat([normie, princeton])
+    princeton["classification"] = "Dark"
 
-print(df['classification'].value_counts())
+     # For later training the model, we should remove the duplicate input to reduce overfitting.
 
-# --------------------- Data Preparation ------------------
+    princeton = princeton.drop_duplicates(subset="Pattern String")
 
-# split the dataset into train and test dataset as a ratio of 60%/40% (train/test).
+     # Subset the princeton dataset for joining with normie dataset.
 
-string_train, string_test, dark_train, dark_test = train_test_split(
-    df['Pattern String'], df["classification"], train_size = .6)
+    cols = ["Pattern String", "classification"]
+    princeton = princeton[cols]
 
-encoder = LabelEncoder()
-encoder.fit(dark_train)
-y_train = encoder.transform(dark_train)
-y_test = encoder.transform(dark_test)
+    df = pd.concat([presence, princeton])
 
-# check the mapping of encoding results (from 0 to 1 representing 'Dark', 'Not Dark')
+    print(df['classification'].value_counts())
 
-print(list(encoder.classes_))
+    # --------------------- Training Preparation ------------------
 
-# Check the frequency distribution of the training pattern classification with pattern classification names.
+    # split the dataset into train and test dataset as a ratio of 60%/40% (train/test).
 
-(unique, counts) = np.unique(dark_train, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
+    string_train, string_test, dark_train, dark_test = train_test_split(
+        df['Pattern String'], df["classification"], train_size = .6)
 
-print(frequencies)
+    encoder = LabelEncoder()
+    encoder.fit(dark_train)
+    y_train = encoder.transform(dark_train)
+    y_test = encoder.transform(dark_test)
 
+    # check the mapping of encoding results (from 0 to 1 representing 'Dark', 'Not Dark')
 
-# Check the frequency distribution of the encoded training pattern classification with encoded integers.
+    print(list(encoder.classes_))
 
-(unique, counts) = np.unique(y_train, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
+    # Check the frequency distribution of the training pattern classification with pattern classification names.
 
-print(frequencies)
+    (unique, counts) = np.unique(dark_train, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
 
+    print(frequencies)
 
-# Check the frequency distribution of the encoded testing pattern classification with encoded integers.
 
-(unique, counts) = np.unique(y_test, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
+    # Check the frequency distribution of the encoded training pattern classification with encoded integers.
 
-print(frequencies)
+    (unique, counts) = np.unique(y_train, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
 
+    print(frequencies)
 
- # First get the word count vector of the pattern string to encode the pattern string.
 
-cv = CountVectorizer()
-string_train_counts = cv.fit_transform(string_train)
+    # Check the frequency distribution of the encoded testing pattern classification with encoded integers.
 
-# Then use the tf-idf score to transform the encoded word count pattern string vectors.
+    (unique, counts) = np.unique(y_test, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
 
-tfidf_tf = TfidfTransformer()
-X_train = tfidf_tf.fit_transform(string_train_counts)
+    print(frequencies)
 
- # save the CountVectorizer to disk
 
-joblib.dump(cv, 'presence_CountVectorizer.joblib')
+     # First get the word count vector of the pattern string to encode the pattern string.
 
-# Five models are tested:
-# -- Logistic Regression
-# -- Linear Support Vector Machine
-# -- Random Forest
-# -- Multinomial Naive Bayes
-# -- Bernoulli Naive Bayes
+    cv = CountVectorizer()
+    string_train_counts = cv.fit_transform(string_train)
 
-classifiers = [LogisticRegression(),LinearSVC(), RandomForestClassifier(), MultinomialNB(), BernoulliNB()]
+    # Then use the tf-idf score to transform the encoded word count pattern string vectors.
 
+    tfidf_tf = TfidfTransformer()
+    X_train = tfidf_tf.fit_transform(string_train_counts)
 
-# Calculate the accuracies of different classifiers using default settings.
+     # save the CountVectorizer to disk
 
-acc = []
-cm = []
+    # joblib.dump(cv, 'presence_CountVectorizer.joblib')
 
-for clf in classifiers:
-    clf.fit(X_train, y_train)
-    y_pred = clf.predict(cv.transform(string_test))
-    acc.append(metrics.accuracy_score(y_test, y_pred))
-    cm.append(metrics.confusion_matrix(y_test, y_pred))
+    s3_resource = boto3.resource('s3')
+    key = 'presence_CountVectorizer.joblib'
 
- # List the accuracies of different classifiers.
+    with tempfile.TemporaryFile() as fp:
+        joblib.dump(cv, fp)
+        fp.seek(0)
+        s3_resource.put_object(Body=fp.read(), Bucket=bucket, Key=key)
 
-for i in range(len(classifiers)):
-    print(f"{classifiers[i]} accuracy: {acc[i]}")
-    # print(f"Confusion Matris: {cm[i]}")
+    # Five models are tested:
+    # -- Logistic Regression
+    # -- Linear Support Vector Machine
+    # -- Random Forest
+    # -- Multinomial Naive Bayes
+    # -- Bernoulli Naive Bayes
 
-# ---------------- Bernoulli Naive Bayes Classifier ------------------
+    classifiers = [LogisticRegression(),LinearSVC(), RandomForestClassifier(), MultinomialNB(), BernoulliNB()]
 
-clf_bnb = BernoulliNB().fit(X_train, y_train)
 
-y_pred = clf_bnb.predict(cv.transform(string_test))
+    # Calculate the accuracies of different classifiers using default settings.
 
-print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
+    acc = []
+    cm = []
 
-(unique, counts) = np.unique(y_pred, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
-print(frequencies)
+    for clf in classifiers:
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(cv.transform(string_test))
+        acc.append(metrics.accuracy_score(y_test, y_pred))
+        cm.append(metrics.confusion_matrix(y_test, y_pred))
 
+     # List the accuracies of different classifiers.
 
-# Parameter tunning
+    for i in range(len(classifiers)):
+        print(f"{classifiers[i]} accuracy: {acc[i]}")
+        # print(f"Confusion Matris: {cm[i]}")
 
-param_grid = {'alpha': [0, 1],
-              'fit_prior': [True, False]}
+    # ---------------- Bernoulli Naive Bayes Classifier ------------------
 
-gs = GridSearchCV(clf_bnb,param_grid,cv=5,
-                      verbose = 1, n_jobs = -1)
+    clf_bnb = BernoulliNB().fit(X_train, y_train)
 
-best_bnb = gs.fit(X_train, y_train)
+    y_pred = clf_bnb.predict(cv.transform(string_test))
 
-scores_df = pd.DataFrame(best_bnb.cv_results_)
-scores_df = scores_df.sort_values(by=['rank_test_score']).reset_index(drop='index')
-print(scores_df [['rank_test_score', 'mean_test_score', 'param_alpha', 'param_fit_prior']])
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
 
-print(best_bnb.best_params_)
+    (unique, counts) = np.unique(y_pred, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
+    print(frequencies)
 
-y_pred_best = best_bnb.predict(cv.transform(string_test))
 
-(unique, counts) = np.unique(y_pred_best, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
-print(frequencies)
+    # Parameter tunning
 
- # save the model to local disk
+    param_grid = {'alpha': [0, 1],
+                  'fit_prior': [True, False]}
 
-joblib.dump(best_bnb, 'bnb_presence_classifier.joblib')
+    gs = GridSearchCV(clf_bnb,param_grid,cv=5,
+                          verbose = 1, n_jobs = -1)
 
+    best_bnb = gs.fit(X_train, y_train)
 
+    scores_df = pd.DataFrame(best_bnb.cv_results_)
+    scores_df = scores_df.sort_values(by=['rank_test_score']).reset_index(drop='index')
+    print(scores_df[['rank_test_score', 'mean_test_score', 'param_alpha', 'param_fit_prior']])
 
+    print(best_bnb.best_params_)
 
-# ------------------- Random Forest Classifier -------------
-clf_rf = RandomForestClassifier().fit(X_train, y_train)
+    y_pred_best = best_bnb.predict(cv.transform(string_test))
 
-y_pred = clf_rf.predict(cv.transform(string_test))
+    (unique, counts) = np.unique(y_pred_best, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
+    print(frequencies)
 
-print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
-print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
+     # save the model to local disk
 
-(unique, counts) = np.unique(y_pred, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
-print(frequencies)
+    # joblib.dump(best_bnb, 'bnb_presence_classifier.joblib')
 
-# Parameter tunning
-param_grid = {'bootstrap':[True,False],
-              'criterion':['gini','entropy'],
-              'max_depth':[10,20,30,40,50,60,70,80,90,100, None],
-              'min_samples_leaf':[1,2,4],
-              'min_samples_split':[2,5,10],
-              'n_estimators':[100,200,300,400,500,600]}
+    s3_resource = boto3.resource('s3')
+    key = 'bnb_presence_classifier.joblib'
 
-gs = GridSearchCV(clf_rf, param_grid, cv=5,
-                  verbose=1, n_jobs=-1)
+    with tempfile.TemporaryFile() as fp:
+        joblib.dump(best_bnb, fp)
+        fp.seek(0)
+        s3_resource.put_object(Body=fp.read(), Bucket=bucket, Key=key)
 
-best_rf = gs.fit(X_train,y_train)
 
-scores_df = pd.DataFrame(best_rf.cv_results_)
-scores_df = scores_df.sort_values(by=['rank_test_score']).reset_index(drop='index')
-print(scores_df [['rank_test_score', 'mean_test_score', 'param_bootstrap', 'param_criterion','param_max_depth','param_min_samples_leaf','param_min_samples_split','param_n_estimators']])
+    # ------------------- Random Forest Classifier -------------
+    clf_rf = RandomForestClassifier().fit(X_train, y_train)
 
-print(best_rf.best_params_)
+    y_pred = clf_rf.predict(cv.transform(string_test))
 
-y_pred_best = best_rf.predict(cv.transform(string_test))
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
 
-print("Accuracy:", metrics.accuracy_score(y_test, y_pred_best))
-print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred_best))
+    (unique, counts) = np.unique(y_pred, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
+    print(frequencies)
 
-(unique, counts) = np.unique(y_pred_best, return_counts=True)
-frequencies = np.asarray((unique, counts)).T
-print(frequencies)
+    # Parameter tunning
+    param_grid = {'bootstrap':[True,False],
+                  'criterion':['gini','entropy'],
+                  'max_depth':[10,20,30,40,50,60,70,80,90,100, None],
+                  'min_samples_leaf':[1,2,4],
+                  'min_samples_split':[2,5,10],
+                  'n_estimators':[100,200,300,400,500,600]}
 
-# save the model to local disk
+    gs = GridSearchCV(clf_rf, param_grid, cv=5,
+                      verbose=1, n_jobs=-1)
 
-joblib.dump(best_rf, 'rf_presence_classifier.joblib')
+    best_rf = gs.fit(X_train,y_train)
 
+    scores_df = pd.DataFrame(best_rf.cv_results_)
+    scores_df = scores_df.sort_values(by=['rank_test_score']).reset_index(drop='index')
+    print(scores_df [['rank_test_score', 'mean_test_score', 'param_bootstrap', 'param_criterion','param_max_depth','param_min_samples_leaf','param_min_samples_split','param_n_estimators']])
+
+    print(best_rf.best_params_)
+
+    y_pred_best = best_rf.predict(cv.transform(string_test))
+
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred_best))
+    print("Confusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred_best))
+
+    (unique, counts) = np.unique(y_pred_best, return_counts=True)
+    frequencies = np.asarray((unique, counts)).T
+    print(frequencies)
+
+    # save the model to local disk
+
+    # joblib.dump(best_rf, 'rf_presence_classifier.joblib')
+
+    s3_resource = boto3.resource('s3')
+    key = 'rf_presence_classifier.joblib'
+
+    with tempfile.TemporaryFile() as fp:
+        joblib.dump(best_rf, fp)
+        fp.seek(0)
+        s3_resource.put_object(Body=fp.read(), Bucket=bucket, Key=key)
+
+    return
+
+
+if __name__ == '__main__':
+   application.run(debug = True)
 
 
 
