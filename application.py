@@ -23,6 +23,11 @@ import json
 
 app = Flask(__name__)
 
+def say_hello(username = "World"):
+    return '<p>Hello %s!</p>\n' % username
+
+app.add_url_rule('/', 'index', (lambda: say_hello()))
+
 @app.route('/api/parse',methods = ['POST'])
 def parse():
     data = request.get_data()
