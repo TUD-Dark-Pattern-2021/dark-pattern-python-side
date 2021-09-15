@@ -1,19 +1,5 @@
-# Web Scraper
-
 import pandas as pd
 import numpy as np
-
-# web scraper
-
-from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-import lxml.html
-import re
-import time
-
-# write to csv file
-
-import csv
 
 # joblib is a set of tools to provide lightweight pipelining in Python. It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
@@ -23,17 +9,17 @@ import json
 
 application = Flask(__name__)
 
-def say_hello(username = "World"):
-    return '<p>Hello %s!</p>\n' % username
+# def say_hello(username = "World"):
+   # return '<p>Hello %s!</p>\n' % username
 
-application.add_url_rule('/', 'index', (lambda: say_hello()))
+# application.add_url_rule('/', 'index', (lambda: say_hello()))
 
 
 @application.route('/api/parse',methods = ['POST'])
 def parse():
     data = request.get_data()
     j_data = json.loads(data)
-    print("input data", j_data)
+    # print("input data", j_data)
     # -------------------------- Checking Presence ------------------
 
      # Loading the saved model with joblib
