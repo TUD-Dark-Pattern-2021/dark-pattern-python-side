@@ -24,7 +24,7 @@ import json
 application = Flask(__name__)
 
 def say_hello(username = "World"):
-    return '<p>Hello %s!</p>\n' % username
+    return '<p>Hello  hello  %s!</p>\n' % username
 
 application.add_url_rule('/', 'index', (lambda: say_hello()))
 
