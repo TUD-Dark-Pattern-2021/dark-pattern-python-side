@@ -36,7 +36,7 @@ def parse():
     presence_pred['presence'] = pre_pred_vec.tolist()
 
     # dark pattern content are those where the predicted result equals to 0.
-    dark = presence_pred.loc[presence_pred['presence']==0]
+    dark = presence_pred.loc[presence_pred['presence'] == 0]
 
     # get the number of presence of dark pattern
     pre_count = dark.shape[0]
@@ -61,11 +61,16 @@ def parse():
 
     dark['category_name'] = [cat_dic[int(category)] for category in category_list]
 
+    dark = dark.reset_index(drop=True)
+
     return_result = {
+        "total_counts": {},
         "items_counts": {},
         "details": []
     }
     # get the list of the dark patterns detected with the frequency count
+
+    return_result['total_counts'] = pre_count
 
     counts = dark['category'].value_counts()
     # for index,name in enumerate(counts.index.tolist()):
@@ -83,7 +88,7 @@ def parse():
             "category": int(dark['category'][j]),
             "category_name": dark['category_name'][j]
         })
-    print("return_result", return_result)
+    #print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')
 
 if __name__ == '__main__':
