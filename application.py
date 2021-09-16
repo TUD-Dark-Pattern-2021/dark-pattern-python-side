@@ -88,7 +88,7 @@ def parse():
             "category": int(dark['category'][j]),
             "category_name": dark['category_name'][j]
         })
-    #print("return_result", return_result)
+    print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')
 
 if __name__ == '__main__':
