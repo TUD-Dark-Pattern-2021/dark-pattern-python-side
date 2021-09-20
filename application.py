@@ -84,6 +84,7 @@ def parse():
     for j in range(len(dark)):
         return_result["details"].append({
             "content": dark['content'][j],
+            "tag":dark['tag'][j],
             "key": dark['key'][j],
             "category": int(dark['category'][j]),
             "category_name": dark['category_name'][j]
