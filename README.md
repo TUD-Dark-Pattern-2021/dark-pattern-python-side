@@ -1,11 +1,6 @@
 # Detection_Pipeline
 
-The 'Pipeline.py' is the detection process, from web scrapping --- dark pattern detection --- dark pattern category classification.
-
-Try a change here.
-
-Try another change here.
-
+The 'application.py' is the detection process, including both dark pattern detection to dark pattern category classification.
 
 ## Packages needed for the file to run:
 
