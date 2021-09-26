@@ -2,6 +2,9 @@
 
 The 'Pipeline.py' is the detection process, from web scrapping --- dark pattern detection --- dark pattern category classification.
 
+Try a change here.
+
+
 ## Packages needed for the file to run:
 
 (1) `pandas`
