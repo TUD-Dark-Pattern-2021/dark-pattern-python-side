@@ -27,5 +27,14 @@ print('Distribution of Pattern Category:\n{}\n'.format(category['Pattern Categor
 # check the distribution of the Pattern Type.
 print('Distribution of Pattern Type:\n{}\n'.format(category['Pattern Type'].value_counts()))
 
+# For later training the model, we should remove the duplicate input to reduce overfitting.
+category_no_duplicate = category.drop_duplicates(subset="Pattern String")
+print(category_no_duplicate.info())
+
+# check the distribution of the Pattern Category.
+print('Distribution of Pattern Category:\n{}\n'.format(category_no_duplicate['Pattern Category'].value_counts()))
+# check the distribution of the Pattern Type.
+print('Distribution of Pattern Type:\n{}\n'.format(category_no_duplicate['Pattern Type'].value_counts()))
+
 # save the new category dataset
-category.to_csv('category.csv', index = False, header = True)
+category_no_duplicate.to_csv('category.csv', index = False, header = True)
