@@ -27,10 +27,17 @@ def parse():
     presence_cv = joblib.load('presence_CountVectorizer.joblib')
 
     # New dataset to predict
-    # presence_pred = pd.read_csv('testing01.csv')
     presence_pred = pd.DataFrame(j_data)
 
-    # apply the pretrained model to the new content data
+    # Remove the rows where the first letter starting with ignoring characters
+    ignore_str = [',', '.', ';', '{', '}', '#', '/', '?']
+    presence_pred = presence_pred[~presence_pred['content'].str[0].isin(ignore_str)]
+
+    # Keep the rows where the word count is between 2 and 45
+    presence_pred = presence_pred[presence_pred['content'].str.split().str.len() > 1]
+    presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 46]
+
+    # apply the pre-trained model to the new content data
     pre_pred_vec = presence_model.predict(presence_cv.transform(presence_pred['content']))
 
     presence_pred['presence'] = pre_pred_vec.tolist()
@@ -59,8 +66,10 @@ def parse():
 
     category_list = dark['category'].tolist()
 
+    # get the mapping of the category name and encoded category integers
     dark['category_name'] = [cat_dic[int(category)] for category in category_list]
 
+    # reset the index of the detected dark pattern list on the webpage.
     dark = dark.reset_index(drop=True)
 
     return_result = {
@@ -72,21 +81,15 @@ def parse():
 
     return_result['total_counts'] = pre_count
 
-    counts = dark['category'].value_counts()
-    # for index,name in enumerate(counts.index.tolist()):
-        # return_result["items_counts"][int(name)] =int(counts.values[index])
-
-    category = counts.keys().tolist()
-    number = counts.tolist()
-    for i in range(len(category)):
-        return_result["items_counts"][category[i]] = number[i]
+    counts = dark['category_name'].value_counts()
+    for index, category_name in enumerate(counts.index.tolist()):
+        return_result["items_counts"][category_name] = int(counts.values[index])
 
     for j in range(len(dark)):
         return_result["details"].append({
             "content": dark['content'][j],
             "tag":dark['tag'][j],
             "key": dark['key'][j],
-            "category": int(dark['category'][j]),
             "category_name": dark['category_name'][j]
         })
     print("return_result", return_result)
