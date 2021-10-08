@@ -29,7 +29,7 @@ import joblib
 # ----------------- Data Preparation ------------
 
 # ---- import dataset from the Princeton Article
-df = pd.read_csv('dark_patterns.csv')
+df = pd.read_csv('s3://darkpatternsdatasets/dark_patterns.csv')
 
 # ---- select from the dataset when 'Pattern String' is not NaN values.
 df = df[pd.notnull(df["Pattern String"])]

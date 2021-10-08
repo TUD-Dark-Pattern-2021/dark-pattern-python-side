@@ -37,4 +37,4 @@ print('Distribution of Pattern Category:\n{}\n'.format(category_no_duplicate['Pa
 print('Distribution of Pattern Type:\n{}\n'.format(category_no_duplicate['Pattern Type'].value_counts()))
 
 # save the new category dataset
-category_no_duplicate.to_csv('category.csv', index = False, header = True)
+category_no_duplicate.to_csv('s3://darkpatternsdatasets/category.csv', index = False, header = True)

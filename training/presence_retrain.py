@@ -28,8 +28,8 @@ import joblib
 
 # --------------------------      Dataset Import      --------------------------------------
 
-presence = pd.read_csv('presence.csv')
-princeton = pd.read_csv('category.csv')
+presence = pd.read_csv('s3://darkpatternsdatasets/presence.csv')
+princeton = pd.read_csv('s3://darkpatternsdatasets/category.csv')
 
 # --------------------------    Data Exploration     --------------------------------------
 # check the distribution of the target value --- classification.
