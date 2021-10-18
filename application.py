@@ -23,8 +23,8 @@ def parse():
     # -------------------------- Checking Presence ------------------
 
      # Loading the saved model with joblib
-    presence_model = joblib.load('bnb_presence_classifier.joblib')
-    presence_cv = joblib.load('presence_CountVectorizer.joblib')
+    presence_model = joblib.load('rf_presence_classifier.joblib')
+    presence_cv = joblib.load('dark_CountVectorizer.joblib')
 
     # New dataset to predict
     presence_pred = pd.DataFrame(j_data)
@@ -35,7 +35,7 @@ def parse():
 
     # Keep the rows where the word count is between 2 and 45
     presence_pred = presence_pred[presence_pred['content'].str.split().str.len() > 1]
-    presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 46]
+    presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 21]
 
     # apply the pre-trained model to the new content data
     pre_pred_vec = presence_model.predict(presence_cv.transform(presence_pred['content']))
