@@ -33,9 +33,16 @@ def parse():
     ignore_str = [',', '.', ';', '{', '}', '#', '/', '?']
     presence_pred = presence_pred[~presence_pred['content'].str[0].isin(ignore_str)]
 
-    # Keep the rows where the word count is between 2 and 45
+    # Keep the rows where the word count is between 2 and 20 (inclusive)
     presence_pred = presence_pred[presence_pred['content'].str.split().str.len() > 1]
-    presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 46]
+    presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 21]
+
+    # Filter out the disturibing content to be removed.
+    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®',
+                'limited edition', 'cart is currently empty', 'believe in', 'today\'s deals']
+    pattern = '|'.join(str_list)
+
+    presence_pred = presence_pred[~presence_pred.content.str.lower().str.contains(pattern)]
 
     # apply the pre-trained model to the new content data
     pre_pred_vec = presence_model.predict(presence_cv.transform(presence_pred['content']))
