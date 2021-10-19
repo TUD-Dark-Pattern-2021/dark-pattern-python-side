@@ -39,7 +39,7 @@ def parse():
 
     # Filter out the disturibing content to be removed.
     str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®',
-                'limited edition', 'cart is currently empty', 'believe in', 'today\'s deals']
+                'limited edition', 'out of stock', 'cart is currently empty', 'free delivery', 'believe in', 'today\'s deals']
     pattern = '|'.join(str_list)
 
     presence_pred = presence_pred[~presence_pred.content.str.lower().str.contains(pattern)]
@@ -56,50 +56,56 @@ def parse():
     pre_count = dark.shape[0]
 
     # ------------------------- Category Classification ------------------
+    if pre_count == 0:
+        return_result = {
+            "total_counts": {},
+            "items_counts": {},
+            "details": []
+        }
+    else:
+        # Loading the saved model with joblib
+        cat_model = joblib.load('mnb_category_classifier.joblib')
+        cat_cv = joblib.load('category_CountVectorizer.joblib')
 
-    # Loading the saved model with joblib
-    cat_model = joblib.load('mnb_category_classifier.joblib')
-    cat_cv = joblib.load('category_CountVectorizer.joblib')
+        # mapping of the encoded dark pattern categories.
+        cat_dic = {0:'Forced Action', 1:'Misdirection', 2:'Obstruction', 3:'Scarcity', 4:'Sneaking',
+                   5:'Social Proof', 6:'Urgency'}
 
-    # mapping of the encoded dark pattern categories.
-    cat_dic = {0:'Forced Action', 1:'Misdirection', 2:'Obstruction', 3:'Scarcity', 4:'Sneaking',
-               5:'Social Proof', 6:'Urgency'}
-
-    # apply the model and the countvectorizer to the detected dark pattern content data
-    cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))
+        # apply the model and the countvectorizer to the detected dark pattern content data
+        cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))                   # Problem
 
 
-    dark['category'] = cat_pred_vec.tolist()
+        dark['category'] = cat_pred_vec.tolist()
 
-    category_list = dark['category'].tolist()
+        category_list = dark['category'].tolist()
 
-    # get the mapping of the category name and encoded category integers
-    dark['category_name'] = [cat_dic[int(category)] for category in category_list]
+        # get the mapping of the category name and encoded category integers
+        dark['category_name'] = [cat_dic[int(category)] for category in category_list]
 
-    # reset the index of the detected dark pattern list on the webpage.
-    dark = dark.reset_index(drop=True)
+        # reset the index of the detected dark pattern list on the webpage.
+        dark = dark.reset_index(drop=True)
 
-    return_result = {
-        "total_counts": {},
-        "items_counts": {},
-        "details": []
-    }
-    # get the list of the dark patterns detected with the frequency count
+        return_result = {
+            "total_counts": {},
+            "items_counts": {},
+            "details": []
+        }
+        # get the list of the dark patterns detected with the frequency count
 
-    return_result['total_counts'] = pre_count
+        return_result['total_counts'] = pre_count
 
-    counts = dark['category_name'].value_counts()
-    for index, category_name in enumerate(counts.index.tolist()):
-        return_result["items_counts"][category_name] = int(counts.values[index])
+        counts = dark['category_name'].value_counts()
+        for index, category_name in enumerate(counts.index.tolist()):
+            return_result["items_counts"][category_name] = int(counts.values[index])
 
-    for j in range(len(dark)):
-        return_result["details"].append({
-            "content": dark['content'][j],
-            "tag":dark['tag'][j],
-            "key": dark['key'][j],
-            "category_name": dark['category_name'][j]
-        })
-    print("return_result", return_result)
+        for j in range(len(dark)):
+            return_result["details"].append({
+                "content": dark['content'][j],
+                "tag":dark['tag'][j],
+                "key": dark['key'][j],
+                "category_name": dark['category_name'][j]
+            })
+        print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')
 
 if __name__ == '__main__':
