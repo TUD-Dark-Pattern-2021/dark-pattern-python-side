@@ -14,6 +14,26 @@ def say_hello(username = "Roger's World"):
 
 application.add_url_rule('/', 'index', (lambda: say_hello()))
 
+@application.route('/api/checkDP',methods = ['POST'])
+def checkDP():
+    data = request.get_data()
+    j_data = json.loads(data)
+
+    presence_model = joblib.load('rf_presence_classifier.joblib')
+    presence_cv = joblib.load('dark_CountVectorizer.joblib')
+
+    pre_pred = presence_model.predict(presence_cv.transform([j_data['content']]))
+
+    if pre_pred == [0]:
+        return_result = {
+            "isDarkPattern": 'Yes'
+        }
+    else:
+        return_result = {
+            "isDarkPattern": 'No'
+        }
+    return Response(json.dumps(return_result), mimetype='application/json')
+
 
 @application.route('/api/parse',methods = ['POST'])
 def parse():
@@ -66,12 +86,11 @@ def parse():
         }
     else:
         # Loading the saved model with joblib
-        cat_model = joblib.load('mnb_category_classifier.joblib')
-        cat_cv = joblib.load('category_CountVectorizer.joblib')
+        cat_model = joblib.load('lr_category_classifier.joblib')
+        cat_cv = joblib.load('type_CountVectorizer.joblib')
 
         # mapping of the encoded dark pattern categories.
-        cat_dic = {0:'Forced Action', 1:'Misdirection', 2:'Obstruction', 3:'Scarcity', 4:'Sneaking',
-                   5:'Social Proof', 6:'Urgency'}
+        cat_dic = {0:'Fake Activity', 1:'Fake Countdown', 2:'Fake High-demand', 3:'Fake Limited-time', 4:'Fake Low-stock'}
 
         # apply the model and the countvectorizer to the detected dark pattern content data
         cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))                   # Problem
