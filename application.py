@@ -30,7 +30,7 @@ def parse():
     presence_pred = pd.DataFrame(j_data)
 
     # Remove the rows where the first letter starting with ignoring characters
-    ignore_str = [',', '.', ';', '{', '}', '#', '/', '?']
+    ignore_str = [',', '.', ';', '{', '}', '#', '/', '(', ')', '?']
     presence_pred = presence_pred[~presence_pred['content'].str[0].isin(ignore_str)]
 
     # Keep the rows where the word count is between 2 and 20 (inclusive)
@@ -39,7 +39,9 @@ def parse():
 
     # Filter out the disturibing content to be removed.
     str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®',
-                'limited edition', 'out of stock', 'cart is currently empty', 'free delivery', 'believe in', 'today\'s deals']
+                'limited edition', 'cart is currently empty', 'out of stock', 'believe in',
+                'today\'s deals', 'customer service', 'offer available', 'offers available',
+                '% off', 'free delivery', 'in stock soon']
     pattern = '|'.join(str_list)
 
     presence_pred = presence_pred[~presence_pred.content.str.lower().str.contains(pattern)]
