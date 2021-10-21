@@ -13,7 +13,7 @@ import numpy as np
 
 
 class 90kDataset(Dataset):
-    # 26 letter & 10 number and
+    # 26 letter & 10 number
     ALLCHARS = 'abcdefghijklmnopqrstuvwxyz0123456789'
     #char to label
     CHAR2LABEL = {char: i + 1 for i, char in enumerate(ALLCHARS)}
