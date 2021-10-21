@@ -90,7 +90,7 @@ def parse():
         cat_cv = joblib.load('type_CountVectorizer.joblib')
 
         # mapping of the encoded dark pattern categories.
-        cat_dic = {0:'Fake Activity', 1:'Fake Countdown', 2:'Fake High-demand', 3:'Fake Limited-time', 4:'Fake Low-stock'}
+        cat_dic = {0:'FakeActivity', 1:'FakeCountdown', 2:'FakeHighDemand', 3:'FakeLimitedTime', 4:'FakeLowStock'}
 
         # apply the model and the countvectorizer to the detected dark pattern content data
         cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))                   # Problem
