@@ -58,10 +58,10 @@ def parse():
     presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 21]
 
     # Filter out the disturibing content to be removed.
-    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®',
-                'limited edition', 'cart is currently empty', 'out of stock', 'believe in',
-                'today\'s deals', 'customer service', 'offer available', 'offers available',
-                '% off', 'free delivery', 'in stock soon']
+    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®', 'details',
+                'limited edition', 'cart is currently empty', 'in cart', 'out of stock', 'believe in',
+                'today\'s deals', 'customer service', 'offer available', 'offers available', 'collect',
+                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer']
     pattern = '|'.join(str_list)
 
     presence_pred = presence_pred[~presence_pred.content.str.lower().str.contains(pattern)]
