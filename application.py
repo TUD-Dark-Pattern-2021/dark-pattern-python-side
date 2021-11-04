@@ -92,6 +92,8 @@ def parse():
         # mapping of the encoded dark pattern categories.
         cat_dic = {0:'FakeActivity', 1:'FakeCountdown', 2:'FakeHighDemand', 3:'FakeLimitedTime', 4:'FakeLowStock'}
 
+        cat_slug = {0:'Fake Activity', 1:'Fake Countdown', 2:'Fake High-demand', 3:'Fake Limited-time', 4:'Fake Low-stock'}
+
         # apply the model and the countvectorizer to the detected dark pattern content data
         cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))                   # Problem
 
@@ -102,6 +104,8 @@ def parse():
 
         # get the mapping of the category name and encoded category integers
         dark['category_name'] = [cat_dic[int(category)] for category in category_list]
+
+        dark['category_name_slug'] = [cat_slug[int(category)] for category in category_list]
 
         # reset the index of the detected dark pattern list on the webpage.
         dark = dark.reset_index(drop=True)
@@ -124,7 +128,8 @@ def parse():
                 "content": dark['content'][j],
                 "tag":dark['tag'][j],
                 "key": dark['key'][j],
-                "category_name": dark['category_name'][j]
+                "category_name": dark['category_name'][j],
+                "category_name_slug": dark['category_name_slug'][j]
             })
         print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')
