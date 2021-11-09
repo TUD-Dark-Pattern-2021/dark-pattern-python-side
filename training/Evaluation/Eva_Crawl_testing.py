@@ -27,7 +27,14 @@ url = ['https://www.lights.ie/umage',
 'https://www.logoup.com/Ladies-Core-Performance-Soft-Shell_p_989.html',
 ‘https://www.scan.co.uk/shop/music-and-pro-audio’
 ‘https://marleylilly.com/’  
-
+'https://eur.shein.com/promotion/Total-sc-02560281.html?ici=eur_tab01navbar03&scici=navbar_WomenHomePage~~tab01navbar03~~3~~webLink~~~~0&srctype=category&userpath=category%3EBLACK%20FRIDAY'
+'https://www.nastygal.com/ie/'
+'https://www.asos.com/women/sale/ctas/sale-edit-2/cat/?cid=28040&nlid=ww|sale|shop+sale+by+product|best+of+sale'
+'https://www.missguided.com/ie/dresses'
+'https://www.superdry.ie/mens/jackets/long-coats'
+'https://www.bananarepublic.co.uk/banana-republic/women/featured-shops/workwear/?mlink=hp_story3_workwear_bg&lang=en_GB'
+'https://www.boohooman.com/eu/mens/new-in?mens_home_main_position1_v1_mens-newin'
+'https://www.sugarbearvitamincare.com/collections/skin-collection'
 ]
 """
 
