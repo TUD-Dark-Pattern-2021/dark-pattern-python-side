@@ -20,7 +20,7 @@ def checkDP():
     j_data = json.loads(data)
 
     presence_model = joblib.load('rf_presence_classifier.joblib')
-    presence_cv = joblib.load('dark_CountVectorizer.joblib')
+    presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
     pre_pred = presence_model.predict(presence_cv.transform([j_data['content']]))
 
@@ -44,7 +44,7 @@ def parse():
 
      # Loading the saved model with joblib
     presence_model = joblib.load('rf_presence_classifier.joblib')
-    presence_cv = joblib.load('dark_CountVectorizer.joblib')
+    presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
     # New dataset to predict
     presence_pred = pd.DataFrame(j_data)
@@ -58,10 +58,12 @@ def parse():
     presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 21]
 
     # Filter out the disturibing content to be removed.
-    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®', 'details',
-                'limited edition', 'cart is currently empty', 'in cart', 'out of stock', 'believe in',
-                'today\'s deals', 'customer service', 'offer available', 'offers available', 'collect',
-                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer']
+#    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®', 'details',
+#                'limited edition', 'cart is currently empty', 'in cart', 'out of stock', 'believe in',
+#                'today\'s deals', 'customer service', 'offer available', 'offers available', 'collect',
+#                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer']
+
+    str_list = ['{', 'UTC']
     pattern = '|'.join(str_list)
 
     presence_pred = presence_pred[~presence_pred.content.str.lower().str.contains(pattern)]
@@ -86,7 +88,7 @@ def parse():
         }
     else:
         # Loading the saved model with joblib
-        cat_model = joblib.load('lr_category_classifier.joblib')
+        cat_model = joblib.load('lr_type_classifier.joblib')
         cat_cv = joblib.load('type_CountVectorizer.joblib')
 
         # mapping of the encoded dark pattern categories.
