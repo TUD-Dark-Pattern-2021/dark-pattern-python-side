@@ -1,11 +1,17 @@
 import pandas as pd
 import numpy as np
+import platform
 
 # joblib is a set of tools to provide lightweight pipelining in Python. It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
 
 from flask import Flask, request, Response
 import json
+import requests
+import shortuuid
+from PIL import Image
+import pytesseract
+import os
 
 application = Flask(__name__)
 
@@ -34,6 +40,26 @@ def checkDP():
         }
     return Response(json.dumps(return_result), mimetype='application/json')
 
+@application.route('/api/checkOCR',methods = ['POST'])
+def checkOCR():
+    if platform.system().lower() == 'windows':
+        pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+    data = request.get_data()
+    j_data = json.loads(data)
+    print(j_data)
+    r = requests.request('get', j_data['content'])
+    image_name = shortuuid.uuid() + '.jpg'
+    image_path = "./images/" + image_name
+    with open(image_path, 'wb') as f:
+        f.write(r.content)
+    f.close()
+    str = pytesseract.image_to_string(Image.open(image_path))
+    os.remove(image_path)
+    return_result = {
+        "status":200,
+        "content": str
+    }
+    return Response(json.dumps(return_result), mimetype='application/json')
 
 @application.route('/api/parse',methods = ['POST'])
 def parse():
