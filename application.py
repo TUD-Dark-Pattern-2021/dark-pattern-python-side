@@ -42,8 +42,8 @@ def checkDP():
 
 @application.route('/api/checkOCR',methods = ['POST'])
 def checkOCR():
-    if platform.system().lower() == 'windows':
-        pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+    #if platform.system().lower() == 'windows':
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
     data = request.get_data()
     j_data = json.loads(data)
     print(j_data)
@@ -61,8 +61,78 @@ def checkOCR():
     }
     return Response(json.dumps(return_result), mimetype='application/json')
 
+
+
 @application.route('/api/parse',methods = ['POST'])
+
 def parse():
+    def ocr():
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        data = request.get_data()
+        j_data = json.loads(data)
+
+        # print(full)
+        # get urls with type = image
+
+        full = pd.DataFrame(j_data)
+        urlss = full.loc[full['type'] == 'image']
+
+        urlss = urlss.reset_index(drop=True)
+        # print(urlss)
+        urls = urlss['content']
+
+        # print(urls)
+
+        # def get_grayscale(img):
+        # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # def thresholding(img):
+        # return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+        def image_text(prep):
+            return pytesseract.image_to_string(prep)
+
+        # create a empty dataframe
+        # df_image = pd.DataFrame(columns=["content", "tag", "key", "type"])
+
+        def texture_detect(all_urls):
+            a = 0
+            for line in all_urls:
+                print(line)
+                r = requests.get(line)
+                image_name = '0.jpg'
+                image_path = "./" + image_name
+                with open(image_path, 'wb') as f:
+                    f.write(r.content)
+                f.close()
+
+                # grayscale the image
+                # gray = get_grayscale(image_path)
+                # threshold the processed image
+
+                # prep = thresholding(gray)
+                itext = image_text(image_path)
+                os.remove(image_path)
+                # image detection
+                # print(itext)
+
+                urlss['content'][a] = itext
+
+                a = a + 1
+
+            urlss["content"] = urlss["content"].map(lambda x: x.split('\n'))
+
+            urlsss = urlss.explode("content")
+
+            return urlsss
+
+        texture_detect = texture_detect(urls)
+
+        return texture_detect
+
+    ocr = ocr()
+
+
     data = request.get_data()
     j_data = json.loads(data)
     # print("input data", j_data)
@@ -73,7 +143,14 @@ def parse():
     presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
     # New dataset to predict
-    presence_pred = pd.DataFrame(j_data)
+    pp = pd.DataFrame(j_data)
+
+    #filter type == text
+    textpp = pp.loc[pp['type'] == 'text']
+
+    combine = [textpp, ocr]
+
+    presence_pred = pd.concat(combine)
 
     # Remove the rows where the first letter starting with ignoring characters
     ignore_str = [',', '.', ';', '{', '}', '#', '/', '(', ')', '?']
@@ -87,7 +164,7 @@ def parse():
 #    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®', 'details',
 #                'limited edition', 'cart is currently empty', 'in cart', 'out of stock', 'believe in',
 #                'today\'s deals', 'customer service', 'offer available', 'offers available', 'collect',
-#                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer']
+#                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer','https']
 
     str_list = ['{', 'UTC']
     pattern = '|'.join(str_list)
