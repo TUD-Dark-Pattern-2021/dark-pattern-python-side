@@ -42,8 +42,8 @@ def checkDP():
 
 @application.route('/api/checkOCR',methods = ['POST'])
 def checkOCR():
-    #if platform.system().lower() == 'windows':
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+    if platform.system().lower() == 'windows':
+        pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
     data = request.get_data()
     j_data = json.loads(data)
     print(j_data)
@@ -67,21 +67,25 @@ def checkOCR():
 
 def parse():
     def ocr():
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        #for running local
+        #if platform.system().lower() == 'windows':
+            #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         data = request.get_data()
         j_data = json.loads(data)
 
-        # print(full)
+
         # get urls with type = image
 
         full = pd.DataFrame(j_data)
+        print(full)
         urlss = full.loc[full['type'] == 'image']
 
         urlss = urlss.reset_index(drop=True)
-        # print(urlss)
+        print(urlss)
         urls = urlss['content']
 
-        # print(urls)
+        print(urls)
 
         # def get_grayscale(img):
         # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -96,29 +100,38 @@ def parse():
         # df_image = pd.DataFrame(columns=["content", "tag", "key", "type"])
 
         def texture_detect(all_urls):
-            a = 0
+            a = -1
             for line in all_urls:
-                print(line)
-                r = requests.get(line)
-                image_name = '0.jpg'
-                image_path = "./" + image_name
-                with open(image_path, 'wb') as f:
-                    f.write(r.content)
-                f.close()
-
-                # grayscale the image
-                # gray = get_grayscale(image_path)
-                # threshold the processed image
-
-                # prep = thresholding(gray)
-                itext = image_text(image_path)
-                os.remove(image_path)
-                # image detection
-                # print(itext)
-
-                urlss['content'][a] = itext
-
                 a = a + 1
+                if 'https:' not in line:
+                    line = "https:" + line
+                print(line)
+
+
+                try:
+                    #print(line)
+                    r = requests.get(line)
+                    image_name = '0.jpg'
+                    image_path = "./" + image_name
+                    with open(image_path, 'wb') as f:
+                        f.write(r.content)
+                    f.close()
+
+                    # grayscale the image
+                    # gray = get_grayscale(image_path)
+                    # threshold the processed image
+                    # prep = thresholding(gray)
+
+                    itext = image_text(image_path)
+                    os.remove(image_path)
+                    # image detection
+                    # print(itext)
+
+                    urlss['content'][a] = itext
+
+
+                except:
+                    continue
 
             urlss["content"] = urlss["content"].map(lambda x: x.split('\n'))
 
