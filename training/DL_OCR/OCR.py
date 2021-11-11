@@ -4,6 +4,8 @@ import argparse
 import os
 from PIL import Image
 
+pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+
 # two arguments : "image" for giving path of image
 #  "preprocess" for methods of pre-process : thresh(default) and blur
 ap = argparse.ArgumentParser(description='Import and use ocr')
