@@ -1,11 +1,17 @@
 import pandas as pd
 import numpy as np
+import platform
 
 # joblib is a set of tools to provide lightweight pipelining in Python. It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
 
 from flask import Flask, request, Response
 import json
+import requests
+import shortuuid
+from PIL import Image
+import pytesseract
+import os
 
 application = Flask(__name__)
 
@@ -20,7 +26,7 @@ def checkDP():
     j_data = json.loads(data)
 
     presence_model = joblib.load('rf_presence_classifier.joblib')
-    presence_cv = joblib.load('dark_CountVectorizer.joblib')
+    presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
     pre_pred = presence_model.predict(presence_cv.transform([j_data['content']]))
 
@@ -34,6 +40,26 @@ def checkDP():
         }
     return Response(json.dumps(return_result), mimetype='application/json')
 
+@application.route('/api/checkOCR',methods = ['POST'])
+def checkOCR():
+    if platform.system().lower() == 'windows':
+        pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+    data = request.get_data()
+    j_data = json.loads(data)
+    print(j_data)
+    r = requests.request('get', j_data['content'])
+    image_name = shortuuid.uuid() + '.jpg'
+    image_path = "./images/" + image_name
+    with open(image_path, 'wb') as f:
+        f.write(r.content)
+    f.close()
+    str = pytesseract.image_to_string(Image.open(image_path))
+    os.remove(image_path)
+    return_result = {
+        "status":200,
+        "content": str
+    }
+    return Response(json.dumps(return_result), mimetype='application/json')
 
 @application.route('/api/parse',methods = ['POST'])
 def parse():
@@ -44,7 +70,7 @@ def parse():
 
      # Loading the saved model with joblib
     presence_model = joblib.load('rf_presence_classifier.joblib')
-    presence_cv = joblib.load('dark_CountVectorizer.joblib')
+    presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
     # New dataset to predict
     presence_pred = pd.DataFrame(j_data)
@@ -58,10 +84,12 @@ def parse():
     presence_pred = presence_pred[presence_pred['content'].str.split().str.len() < 21]
 
     # Filter out the disturibing content to be removed.
-    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®',
-                'limited edition', 'cart is currently empty', 'out of stock', 'believe in',
-                'today\'s deals', 'customer service', 'offer available', 'offers available',
-                '% off', 'free delivery', 'in stock soon']
+#    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®', 'details',
+#                'limited edition', 'cart is currently empty', 'in cart', 'out of stock', 'believe in',
+#                'today\'s deals', 'customer service', 'offer available', 'offers available', 'collect',
+#                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer']
+
+    str_list = ['{', 'UTC']
     pattern = '|'.join(str_list)
 
     presence_pred = presence_pred[~presence_pred.content.str.lower().str.contains(pattern)]
@@ -86,11 +114,13 @@ def parse():
         }
     else:
         # Loading the saved model with joblib
-        cat_model = joblib.load('lr_category_classifier.joblib')
+        cat_model = joblib.load('lr_type_classifier.joblib')
         cat_cv = joblib.load('type_CountVectorizer.joblib')
 
         # mapping of the encoded dark pattern categories.
         cat_dic = {0:'FakeActivity', 1:'FakeCountdown', 2:'FakeHighDemand', 3:'FakeLimitedTime', 4:'FakeLowStock'}
+
+        cat_slug = {0:'Fake Activity', 1:'Fake Countdown', 2:'Fake High-demand', 3:'Fake Limited-time', 4:'Fake Low-stock'}
 
         # apply the model and the countvectorizer to the detected dark pattern content data
         cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))                   # Problem
@@ -102,6 +132,8 @@ def parse():
 
         # get the mapping of the category name and encoded category integers
         dark['category_name'] = [cat_dic[int(category)] for category in category_list]
+
+        dark['category_name_slug'] = [cat_slug[int(category)] for category in category_list]
 
         # reset the index of the detected dark pattern list on the webpage.
         dark = dark.reset_index(drop=True)
@@ -124,7 +156,8 @@ def parse():
                 "content": dark['content'][j],
                 "tag":dark['tag'][j],
                 "key": dark['key'][j],
-                "category_name": dark['category_name'][j]
+                "category_name": dark['category_name'][j],
+                "category_name_slug": dark['category_name_slug'][j]
             })
         print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')

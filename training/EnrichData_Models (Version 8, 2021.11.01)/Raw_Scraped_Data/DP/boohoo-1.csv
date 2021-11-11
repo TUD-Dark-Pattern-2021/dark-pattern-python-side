@@ -1,0 +1,9 @@
+content,presence
+@media only screen and (min-width: 768px) {.top-banner .sticky-header {position: relative;}},0
+New In Today,0
+Back In Stock,0
+Last Chance Sale,0
+New In Today,0
+Limited Edition Neutrals,0
+Limited Edition Neutrals,0
+"$(window).on('load', resetMMoffers);    $(document).on('menu.reinit', resetMMoffers);    function resetMMoffers() {        var offersInclude = $('.mobile-category-offers-include');					        offersInclude.each(function(){            var offers = $(this).parents('li').find('.category-offer-slot').html();            $(this).html(offers);        });    }",0
