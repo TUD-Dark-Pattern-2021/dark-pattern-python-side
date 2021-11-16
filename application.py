@@ -143,7 +143,7 @@ def parse():
 
         return texture_detect
 
-    ocr = ocr()
+#    ocr = ocr()
 
 
     data = request.get_data()
@@ -156,14 +156,14 @@ def parse():
     presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
     # New dataset to predict
-    pp = pd.DataFrame(j_data)
+    presence_pred = pd.DataFrame(j_data)
 
     #filter type == text
-    textpp = pp.loc[pp['type'] == 'text']
+#    textpp = pp.loc[pp['type'] == 'text']
 
-    combine = [textpp, ocr]
+#    combine = [textpp, ocr]
 
-    presence_pred = pd.concat(combine)
+#    presence_pred = pd.concat(combine)
 
     # Remove the rows where the first letter starting with ignoring characters
     ignore_str = [',', '.', ';', '{', '}', '#', '/', '(', ')', '?']
