@@ -199,7 +199,7 @@ def parse():
     # get the number of presence of dark pattern
     pre_count = dark.shape[0]
 
-    # ------------------------- Category Classification ------------------
+    # ------------------------- Pattern Type Classification ------------------
     if pre_count == 0:
         return_result = {
             "total_counts": {},
@@ -208,26 +208,26 @@ def parse():
         }
     else:
         # Loading the saved model with joblib
-        cat_model = joblib.load('lr_type_classifier.joblib')
-        cat_cv = joblib.load('type_CountVectorizer.joblib')
+        type_model = joblib.load('lr_type_classifier.joblib')
+        type_cv = joblib.load('type_CountVectorizer.joblib')
 
-        # mapping of the encoded dark pattern categories.
-        cat_dic = {0:'FakeActivity', 1:'FakeCountdown', 2:'FakeHighDemand', 3:'FakeLimitedTime', 4:'FakeLowStock'}
+        # mapping of the encoded dark pattern types.
+        type_dic = {0:'FakeActivity', 1:'FakeCountdown', 2:'FakeHighDemand', 3:'FakeLimitedTime', 4:'FakeLowStock'}
 
-        cat_slug = {0:'Fake Activity', 1:'Fake Countdown', 2:'Fake High-demand', 3:'Fake Limited-time', 4:'Fake Low-stock'}
+        type_slug = {0:'Fake Activity', 1:'Fake Countdown', 2:'Fake High-demand', 3:'Fake Limited-time', 4:'Fake Low-stock'}
 
         # apply the model and the countvectorizer to the detected dark pattern content data
-        cat_pred_vec = cat_model.predict(cat_cv.transform(dark['content']))                   # Problem
+        type_pred_vec = type_model.predict(type_cv.transform(dark['content']))                   # Problem
 
 
-        dark['category'] = cat_pred_vec.tolist()
+        dark['type'] = type_pred_vec.tolist()
 
-        category_list = dark['category'].tolist()
+        type_list = dark['type'].tolist()
 
-        # get the mapping of the category name and encoded category integers
-        dark['category_name'] = [cat_dic[int(category)] for category in category_list]
+        # get the mapping of the type name and encoded type integers
+        dark['type_name'] = [type_dic[int(type)] for type in type_list]
 
-        dark['category_name_slug'] = [cat_slug[int(category)] for category in category_list]
+        dark['type_name_slug'] = [type_slug[int(type)] for type in type_list]
 
         # reset the index of the detected dark pattern list on the webpage.
         dark = dark.reset_index(drop=True)
@@ -241,17 +241,17 @@ def parse():
 
         return_result['total_counts'] = pre_count
 
-        counts = dark['category_name'].value_counts()
-        for index, category_name in enumerate(counts.index.tolist()):
-            return_result["items_counts"][category_name] = int(counts.values[index])
+        counts = dark['type_name'].value_counts()
+        for index, type_name in enumerate(counts.index.tolist()):
+            return_result["items_counts"][type_name] = int(counts.values[index])
 
         for j in range(len(dark)):
             return_result["details"].append({
                 "content": dark['content'][j],
                 "tag":dark['tag'][j],
                 "key": dark['key'][j],
-                "category_name": dark['category_name'][j],
-                "category_name_slug": dark['category_name_slug'][j]
+                "type_name": dark['type_name'][j],
+                "type_name_slug": dark['type_name_slug'][j]
             })
         print("return_result", return_result)
     return Response(json.dumps(return_result), mimetype='application/json')
