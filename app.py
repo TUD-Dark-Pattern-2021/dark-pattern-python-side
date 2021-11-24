@@ -71,6 +71,7 @@ def parse():
         #if platform.system().lower() == 'windows':
             #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+
         data = request.get_data()
         j_data = json.loads(data)
 
@@ -89,11 +90,11 @@ def parse():
 
 
 
-        # def get_grayscale(img):
-        # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        def get_grayscale(img):
+            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # def thresholding(img):
-        # return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        def thresholding(img):
+            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         def image_text(prep):
             return pytesseract.image_to_string(prep)
@@ -258,7 +259,6 @@ if __name__ == '__main__':
    application.run(debug = True)
 
 
-@application.route('/api/parse',methods = ['POST'])
 
 def ocr():
     #for running local
