@@ -8,9 +8,9 @@ import joblib
 from flask import Flask, request, Response
 import json
 import requests
-import shortuuid
-from PIL import Image
-import pytesseract
+#import shortuuid
+#from PIL import Image
+#import pytesseract
 import os
 
 application = Flask(__name__)
@@ -74,9 +74,7 @@ def parse():
         data = request.get_data()
         j_data = json.loads(data)
 
-
         # get urls with type = image
-
         full = pd.DataFrame(j_data)
         print(full)
         urlss = full.loc[full['type'] == 'image']
@@ -149,6 +147,47 @@ def parse():
 
 #    ocr = ocr()
 
+    # ---------------------------  Check Confirmshaming DP --------------------------
+
+    def confirm_shaming():
+
+        # Get all the HTML data
+        data = request.get_data()
+        j_data = json.loads(data)
+
+        # get text with type == link or type == button
+        html = pd.DataFrame(j_data)
+        print(html)
+
+        link_text = html.loc[html['type'].isin(['link','button'])]
+
+
+
+        # Loading the saved model with joblib
+        detection_model = joblib.load('confirm_rf_clf.joblib')
+        detection_cv = joblib.load('confirm_cv.joblib')
+
+        # apply the pre-trained confirmshaming detection model to the button / link text data
+        pred_vec = detection_model.predict(detection_cv.transform(link_text['content']))
+
+        link_text['presence'] = pred_vec.tolist()
+
+        # dark pattern content are those where the predicted result equals to 0.
+        confirm_shaming = link_text.loc[link_text['presence'] == 0]
+
+        confirm_shaming = confirm_shaming.reset_index(drop=True)
+
+        # get the number of presence of dark pattern
+        confirm_shaming_count = confirm_shaming.shape[0]
+        print('Number of confirmshaming DP: ', confirm_shaming_count)
+
+        return confirm_shaming
+
+    confirm_shaming = confirm_shaming()
+
+    confirm_count = confirm_shaming.shape[0]
+
+    # ----------------------------- Get Text data for 5 DP types detection ---------------------
 
     data = request.get_data()
     j_data = json.loads(data)
@@ -201,7 +240,7 @@ def parse():
     pre_count = dark.shape[0]
 
     # ------------------------- Pattern Type Classification ------------------
-    if pre_count == 0:
+    if pre_count == 0 and confirm_count == 0:
         return_result = {
             "total_counts": {},
             "items_counts": {},
@@ -240,7 +279,7 @@ def parse():
         }
         # get the list of the dark patterns detected with the frequency count
 
-        return_result['total_counts'] = pre_count
+        return_result['total_counts'] = pre_count + confirm_count
 
         counts = dark['type_name'].value_counts()
         for index, type_name in enumerate(counts.index.tolist()):
@@ -255,6 +294,21 @@ def parse():
                 "type_name_slug": dark['type_name_slug'][j]
             })
         print("return_result", return_result)
+
+        # ----------- Add confirmshaming DP information if there is any. ---------
+        if confirm_count != 0:
+            return_result["items_counts"]["Confirmshaming"] = confirm_count
+
+            for j in range(len(confirm_shaming)):
+                return_result["details"].append({
+                    "content": confirm_shaming['content'][j],
+                    "tag": confirm_shaming['tag'][j],
+                    "key": confirm_shaming['key'][j],
+                    "type_name": "Confirmshaming",
+                    "type_name_slug": "Confirmshaming"
+                })
+
+        # ----------------
     return Response(json.dumps(return_result), mimetype='application/json')
 
 if __name__ == '__main__':
