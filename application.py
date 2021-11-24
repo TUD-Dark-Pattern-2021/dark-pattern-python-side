@@ -153,7 +153,8 @@ def parse():
     data = request.get_data()
     j_data = json.loads(data)
     # print("input data", j_data)
-    # -------------------------- Checking Presence ------------------
+
+    # ----------------------------- Checking Presence ----------------------
 
      # Loading the saved model with joblib
     presence_model = joblib.load('rf_presence_classifier.joblib')
