@@ -80,11 +80,12 @@ def checkOCR():
 @application.route('/api/parse',methods = ['POST'])
 
 def parse():
+
     def ocr():
-        #for running local
-        #if platform.system().lower() == 'windows':
-            #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
-        #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        # for running local
+        # if platform.system().lower() == 'windows':
+        # pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        # pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         data = request.get_data()
         j_data = json.loads(data)
 
@@ -103,11 +104,11 @@ def parse():
 
         print(urls)
 
-        # def get_grayscale(img):
-        # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        def get_grayscale(img):
+            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # def thresholding(img):
-        # return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        def thresholding(img):
+            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         def image_text(prep):
             return pytesseract.image_to_string(prep)
@@ -123,9 +124,8 @@ def parse():
                     line = "https:" + line
                 print(line)
 
-
                 try:
-                    #print(line)
+                    # print(line)
                     r = requests.get(line)
                     image_name = '0.jpg'
                     image_path = "./" + image_name
@@ -158,6 +158,7 @@ def parse():
         texture_detect = texture_detect(urls)
 
         return texture_detect
+
 
 
     # ---------------------------  Check Confirmshaming DP --------------------------
@@ -212,16 +213,20 @@ def parse():
     presence_model = joblib.load('rf_presence_classifier.joblib')
     presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
+
+
     # New dataset to predict
+
     presence_pred = pd.DataFrame(j_data)
 
     # --------- Make OCR optional -----
-    if presence_pred['isocr'] == 1:
-        ocr = ocr()
+    if presence_pred['is_ocr'] == 1:
+        texture_detect = ocr()
         # filter type == text
         textpp = presence_pred.loc[presence_pred['type'] == 'text']
         combine = [textpp, ocr]
         presence_pred = pd.concat(combine)
+
 
     # Remove the rows where the first letter starting with ignoring characters
     ignore_str = [',', '.', ';', '{', '}', '#', '/', '(', ')', '?']
