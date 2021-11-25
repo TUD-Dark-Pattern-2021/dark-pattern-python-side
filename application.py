@@ -293,7 +293,6 @@ def parse():
                 "type_name": dark['type_name'][j],
                 "type_name_slug": dark['type_name_slug'][j]
             })
-        print("return_result", return_result)
 
         # ----------- Add confirmshaming DP information if there is any. ---------
         if confirm_count != 0:
@@ -308,6 +307,7 @@ def parse():
                     "type_name_slug": "Confirmshaming"
                 })
 
+        print("return_result", return_result)
         # ----------------
     return Response(json.dumps(return_result), mimetype='application/json')
 
