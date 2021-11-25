@@ -25,12 +25,26 @@ def checkDP():
     data = request.get_data()
     j_data = json.loads(data)
 
+    df = pd.DataFrame(j_data)
+    # ------ Check the 5 pattern types -------
+
     presence_model = joblib.load('rf_presence_classifier.joblib')
     presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
-    pre_pred = presence_model.predict(presence_cv.transform([j_data['content']]))
+    pre_pred = presence_model.predict(presence_cv.transform([df['content']]))
 
-    if pre_pred == [0]:
+    # ------- Check the Confirmshaming DP --------
+    link_text = df.loc[df['type'].isin(['link', 'button'])]
+
+    # Loading the saved model with joblib
+    detection_model = joblib.load('confirm_rf_clf.joblib')
+    detection_cv = joblib.load('confirm_cv.joblib')
+
+    # apply the pre-trained confirmshaming detection model to the button / link text data
+    pred_vec = detection_model.predict(detection_cv.transform(link_text['content']))
+
+    # -------- Check the total detection result --------
+    if pre_pred == [0] or pred_vec == [0]:
         return_result = {
             "isDarkPattern": 'Yes'
         }
@@ -145,7 +159,6 @@ def parse():
 
         return texture_detect
 
-    texture_detect = ocr()
 
 
     # ---------------------------  Check Confirmshaming DP --------------------------
@@ -206,12 +219,12 @@ def parse():
 
     presence_pred = pd.DataFrame(j_data)
 
-    #taggle: 1 mains ocr active/
-    if presence_pred[] == 1:
-
-    #filter type == text
+    # --------- Make OCR optional -----
+    if presence_pred['is_ocr'] == 1:
+        texture_detect = ocr()
+        # filter type == text
         textpp = presence_pred.loc[presence_pred['type'] == 'text']
-        combine = [textpp, texture_detect]
+        combine = [textpp, ocr]
         presence_pred = pd.concat(combine)
 
 
