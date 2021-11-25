@@ -8,9 +8,9 @@ import joblib
 from flask import Flask, request, Response
 import json
 import requests
-#import shortuuid
-#from PIL import Image
-#import pytesseract
+import shortuuid
+from PIL import Image
+import pytesseract
 import os
 
 application = Flask(__name__)
@@ -66,86 +66,6 @@ def checkOCR():
 @application.route('/api/parse',methods = ['POST'])
 
 def parse():
-    def ocr():
-        #for running local
-        #if platform.system().lower() == 'windows':
-            #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
-        #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
-        data = request.get_data()
-        j_data = json.loads(data)
-
-        # get urls with type = image
-        full = pd.DataFrame(j_data)
-        print(full)
-        urlss = full.loc[full['type'] == 'image']
-
-        urlss.duplicated(['content'])
-
-        urlss3 = urlss.drop_duplicates(['content'])
-
-        urlss2 = urlss3.reset_index(drop=True)
-        print(urlss2)
-        urls = urlss2['content']
-
-        print(urls)
-
-        # def get_grayscale(img):
-        # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        # def thresholding(img):
-        # return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
-        def image_text(prep):
-            return pytesseract.image_to_string(prep)
-
-        # create a empty dataframe
-        # df_image = pd.DataFrame(columns=["content", "tag", "key", "type"])
-
-        def texture_detect(all_urls):
-            a = -1
-            for line in all_urls:
-                a = a + 1
-                if 'https:' not in line:
-                    line = "https:" + line
-                print(line)
-
-
-                try:
-                    #print(line)
-                    r = requests.get(line)
-                    image_name = '0.jpg'
-                    image_path = "./" + image_name
-                    with open(image_path, 'wb') as f:
-                        f.write(r.content)
-                    f.close()
-
-                    # grayscale the image
-                    # gray = get_grayscale(image_path)
-                    # threshold the processed image
-                    # prep = thresholding(gray)
-
-                    itext = image_text(image_path)
-                    os.remove(image_path)
-                    # image detection
-                    # print(itext)
-
-                    urlss['content'][a] = itext
-
-
-                except:
-                    continue
-
-            urlss["content"] = urlss["content"].map(lambda x: x.split('\n'))
-
-            urlsss = urlss.explode("content")
-
-            return urlsss
-
-        texture_detect = texture_detect(urls)
-
-        return texture_detect
-
-#    ocr = ocr()
 
     # ---------------------------  Check Confirmshaming DP --------------------------
 
@@ -289,6 +209,192 @@ def parse():
             return_result["details"].append({
                 "content": dark['content'][j],
                 "tag":dark['tag'][j],
+                "key": dark['key'][j],
+                "type_name": dark['type_name'][j],
+                "type_name_slug": dark['type_name_slug'][j]
+            })
+
+        # ----------- Add confirmshaming DP information if there is any. ---------
+        if confirm_count != 0:
+            return_result["items_counts"]["Confirmshaming"] = confirm_count
+
+            for j in range(len(confirm_shaming)):
+                return_result["details"].append({
+                    "content": confirm_shaming['content'][j],
+                    "tag": confirm_shaming['tag'][j],
+                    "key": confirm_shaming['key'][j],
+                    "type_name": "Confirmshaming",
+                    "type_name_slug": "Confirmshaming"
+                })
+
+        print("return_result", return_result)
+        # ----------------
+    return Response(json.dumps(return_result), mimetype='application/json')
+
+def ocr():
+    #for running local
+    #if platform.system().lower() == 'windows':
+        #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+    #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+    data = request.get_data()
+    j_data = json.loads(data)
+
+    # get urls with type = image
+    full = pd.DataFrame(j_data)
+    print(full)
+    urlss = full.loc[full['type'] == 'image']
+
+    urlss.duplicated(['content'])
+
+    urlss3 = urlss.drop_duplicates(['content'])
+
+    urlss2 = urlss3.reset_index(drop=True)
+    print(urlss2)
+    urls = urlss2['content']
+
+    print(urls)
+
+    # def get_grayscale(img):
+    # return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # def thresholding(img):
+    # return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+    def image_text(prep):
+        return pytesseract.image_to_string(prep)
+
+    # create a empty dataframe
+    # df_image = pd.DataFrame(columns=["content", "tag", "key", "type"])
+
+    def texture_detect(all_urls):
+        a = -1
+        for line in all_urls:
+            a = a + 1
+            if 'https:' not in line:
+                line = "https:" + line
+            print(line)
+
+
+            try:
+                #print(line)
+                r = requests.get(line)
+                image_name = '0.jpg'
+                image_path = "./" + image_name
+                with open(image_path, 'wb') as f:
+                    f.write(r.content)
+                f.close()
+
+                # grayscale the image
+                # gray = get_grayscale(image_path)
+                # threshold the processed image
+                # prep = thresholding(gray)
+
+                itext = image_text(image_path)
+                os.remove(image_path)
+                # image detection
+                # print(itext)
+
+                urlss['content'][a] = itext
+
+
+            except:
+                continue
+
+        urlss["content"] = urlss["content"].map(lambda x: x.split('\n'))
+
+        urlsss = urlss.explode("content")
+
+        return urlsss
+
+    texture_detect = texture_detect(urls)
+
+    return texture_detect
+
+    presence_model = joblib.load('rf_presence_classifier.joblib')
+    presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
+
+
+
+    # Remove the rows where the first letter starting with ignoring characters
+    ignore_str = [',', '.', ';', '{', '}', '#', '/', '(', ')', '?']
+    texture_detect = texture_detect[~texture_detect['content'].str[0].isin(ignore_str)]
+
+    # Keep the rows where the word count is between 2 and 20 (inclusive)
+    texture_detect = texture_detect[texture_detect['content'].str.split().str.len() > 1]
+    texture_detect = texture_detect[texture_detect['content'].str.split().str.len() < 21]
+
+    # Filter out the disturibing content to be removed.
+    #    str_list = ['low to high', 'high to low', 'high low', 'low high', '{', 'ships', 'ship', '®', 'details',
+    #                'limited edition', 'cart is currently empty', 'in cart', 'out of stock', 'believe in',
+    #                'today\'s deals', 'customer service', 'offer available', 'offers available', 'collect',
+    #                '% off', 'in stock soon', 'problem', 'UTC', 'javascript', 'cookie', 'cookies', 'disclaimer','https']
+
+    str_list = ['{', 'UTC']
+    pattern = '|'.join(str_list)
+
+    texture_detect = texture_detect[~texture_detect.content.str.lower().str.contains(pattern)]
+
+    # apply the pre-trained model to the new content data
+    pre_pred_vec = presence_model.predict(presence_cv.transform(texture_detect['content']))
+
+    texture_detect['presence'] = pre_pred_vec.tolist()
+
+    # dark pattern content are those where the predicted result equals to 0.
+    dark = texture_detect.loc[texture_detect['presence'] == 0]
+
+    # get the number of presence of dark pattern
+    pre_count = dark.shape[0]
+
+    # ------------------------- Pattern Type Classification ------------------
+    if pre_count == 0 and confirm_count == 0:
+        return_result = {
+            "total_counts": {},
+            "items_counts": {},
+            "details": []
+        }
+    else:
+        # Loading the saved model with joblib
+        type_model = joblib.load('lr_type_classifier.joblib')
+        type_cv = joblib.load('type_CountVectorizer.joblib')
+
+        # mapping of the encoded dark pattern types.
+        type_dic = {0: 'FakeActivity', 1: 'FakeCountdown', 2: 'FakeHighDemand', 3: 'FakeLimitedTime', 4: 'FakeLowStock'}
+
+        type_slug = {0: 'Fake Activity', 1: 'Fake Countdown', 2: 'Fake High-demand', 3: 'Fake Limited-time',
+                     4: 'Fake Low-stock'}
+
+        # apply the model and the countvectorizer to the detected dark pattern content data
+        type_pred_vec = type_model.predict(type_cv.transform(dark['content']))  # Problem
+
+        dark['type'] = type_pred_vec.tolist()
+
+        type_list = dark['type'].tolist()
+
+        # get the mapping of the type name and encoded type integers
+        dark['type_name'] = [type_dic[int(type)] for type in type_list]
+
+        dark['type_name_slug'] = [type_slug[int(type)] for type in type_list]
+
+        # reset the index of the detected dark pattern list on the webpage.
+        dark = dark.reset_index(drop=True)
+
+        return_result = {
+            "total_counts": {},
+            "items_counts": {},
+            "details": []
+        }
+        # get the list of the dark patterns detected with the frequency count
+
+        return_result['total_counts'] = pre_count + confirm_count
+
+        counts = dark['type_name'].value_counts()
+        for index, type_name in enumerate(counts.index.tolist()):
+            return_result["items_counts"][type_name] = int(counts.values[index])
+
+        for j in range(len(dark)):
+            return_result["details"].append({
+                "content": dark['content'][j],
+                "tag": dark['tag'][j],
                 "key": dark['key'][j],
                 "type_name": dark['type_name'][j],
                 "type_name_slug": dark['type_name_slug'][j]
