@@ -220,11 +220,11 @@ def parse():
     presence_pred = pd.DataFrame(j_data)
 
     # --------- Make OCR optional -----
-    if presence_pred['is_ocr'] == 1:
+    if presence_pred['is_ocr'][0] == 1:
         texture_detect = ocr()
         # filter type == text
         textpp = presence_pred.loc[presence_pred['type'] == 'text']
-        combine = [textpp, ocr]
+        combine = [textpp, texture_detect]
         presence_pred = pd.concat(combine)
 
 
