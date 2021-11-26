@@ -12,6 +12,7 @@ import shortuuid
 from PIL import Image
 import pytesseract
 import os
+import cv2
 
 application = Flask(__name__)
 
@@ -83,8 +84,8 @@ def parse():
 
     def ocr():
         # for running local
-        #if platform.system().lower() == 'windows':
-        #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        if platform.system().lower() == 'windows':
+            pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         data = request.get_data()
         j_data = json.loads(data)
@@ -106,11 +107,11 @@ def parse():
 
         #print(urls)
 
-        #def get_grayscale(img):
-            #return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        def get_grayscale(img):
+            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        #def thresholding(img):
-            #return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        def thresholding(img):
+            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         def image_text(prep):
             return pytesseract.image_to_string(prep)
@@ -129,21 +130,30 @@ def parse():
                 try:
                     # print(line)
                     r = requests.get(line)
-                    image_name = '0.jpg'
+                    image_name = 'image.jpg'
                     image_path = "./" + image_name
                     with open(image_path, 'wb') as f:
                         f.write(r.content)
                     f.close()
 
+                    #img = cv2.resize(f, None, fx=2, fy=2)
+                    #image = cv2.imread(image_path)
+
                     # grayscale the image
-                    # gray = get_grayscale(image_path)
+                    #gray = get_grayscale(image)
                     # threshold the processed image
-                    # prep = thresholding(gray)
+                    #prep = thresholding(gray)
+
+                    #filename = "{}.png".format(os.getpid())
+                    #cv2.imwrite(filename, gray)
 
                     itext = image_text(image_path)
+                    #itext = image_text(Image.open(filename))
                     os.remove(image_path)
+                    #os.remove(filename)
                     # image detection
                     # print(itext)
+
 
                     urlss2['content'][a] = itext
                     print(itext)
@@ -227,7 +237,7 @@ def parse():
     if presence_pred['is_ocr'][0] == 1:
         texture_detect = ocr()
         # filter type == text
-        #textpp = pp.loc[pp['type'] == 'text']
+    #textpp = pp.loc[pp['type'] == 'text']
         textpp = presence_pred.loc[presence_pred['type'] == 'text']
         combine = [textpp, texture_detect]
         presence_pred = pd.concat(combine)
