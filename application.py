@@ -84,8 +84,8 @@ def parse():
 
     def ocr():
         # for running local
-        if platform.system().lower() == 'windows':
-            pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        #if platform.system().lower() == 'windows':
+            #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         data = request.get_data()
         j_data = json.loads(data)
