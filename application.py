@@ -12,7 +12,7 @@ import shortuuid
 from PIL import Image
 import pytesseract
 import os
-import cv2
+#import cv2
 
 application = Flask(__name__)
 
