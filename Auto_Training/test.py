@@ -12,3 +12,12 @@ print(model)
 print(type(model))
 print(model[0])
 print(type(model[0]))
+
+model_best_f1 = ["LR", "RF"]
+
+# subset the model_dic to be the ones have the highest F1 Score
+precision_dic = {key: value for key, value in model_dic.items() if key in model_best_f1}
+
+print(precision_dic)
+
+
