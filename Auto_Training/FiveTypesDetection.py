@@ -46,7 +46,7 @@ data = data.drop_duplicates(subset="Pattern String")
 
 # split the dataset into train and test dataset as a ratio of 70%/30% (train/test).
 string_train, string_test, dark_train, dark_test = train_test_split(
-    data['Pattern String'], data["classification"], train_size = .7)
+    data['Pattern String'], data["classification"], train_size = .7, stratify = data["classification"])
 
 # encode the target values into integers ---- "classification"
 encoder = LabelEncoder()
