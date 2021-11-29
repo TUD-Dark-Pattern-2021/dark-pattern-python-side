@@ -254,7 +254,38 @@ print("Confusion Matrix (RF):\n", rf_cm)
 joblib.dump(best_rf, 'rf_presence_classifier.joblib')
 
 
+### --------------------------------------------------------------------------------------------------
+### ------------------------------------- Model Selection for Deploy
+### --------------------------------------------------------------------------------------------------
 
+# create the dictionary gathering the information of the models trained
+# format as [Accuracy, Precision, Recall, F1 Score]
+model_dic = {"BNB": {"Accuracy": bnb_accuracy, "Precision": bnb_precision, "Recall": bnb_recall, "F1": bnb_f1},
+             "LR":{"Accuracy": lr_accuracy, "Precision": lr_precision, "Recall": lr_recall, "F1": lr_f1},
+             "SVM":{"Accuracy": svm_accuracy, "Precision": svm_precision, "Recall": svm_recall, "F1": svm_f1},
+             "RF":{"Accuracy": rf_accuracy, "Precision": rf_precision, "Recall": rf_recall, "F1": rf_f1}}
+
+# find the model with the highest Precision
+max_precision = max(values["Precision"] for key, values in model_dic.items())
+print(max_precision)
+model_best_precision = [model for model, precision in model_dic.items() if precision["Precision"] == max_precision]
+print(model_best_precision)
+
+# find the model with the highest Recall
+max_recall = max(values["Recall"] for key, values in model_dic.items())
+print(max_recall)
+model_best_recall = [model for model, precision in model_dic.items() if precision["Recall"] == max_recall]
+print(model_best_recall)
+
+# find the model with the highest F1 Score
+max_f1 = max(values["F1"] for key, values in model_dic.items())
+print(max_f1)
+model_best_f1 = [model for model, precision in model_dic.items() if precision["Recall"] == max_f1]
+print(model_best_f1)
+
+# save the model having the best F1 Score
+model_map = {"BNB":best_bnb, "LR": best_lr, "SVM": best_svm, "RF": best_rf}
+joblib.dump(model_map[model_best_f1[0]], 'best_f1_presence_classifier.joblib')
 
 
 
