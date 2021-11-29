@@ -46,7 +46,7 @@ data = data.drop_duplicates(subset="Pattern String")
 
 # split the dataset into train and test dataset as a ratio of 70%/30% (train/test).
 string_train, string_test, dark_train, dark_test = train_test_split(
-    data['Pattern String'], data["classification"], train_size = .7)
+    data['Pattern String'], data["classification"], train_size = .7, stratify = data["classification"])
 
 # encode the target values into integers ---- "classification"
 encoder = LabelEncoder()
@@ -274,19 +274,46 @@ print(model_best_precision)
 # find the model with the highest Recall
 max_recall = max(values["Recall"] for key, values in model_dic.items())
 print(max_recall)
-model_best_recall = [model for model, precision in model_dic.items() if precision["Recall"] == max_recall]
+model_best_recall = [model for model, recall in model_dic.items() if recall["Recall"] == max_recall]
 print(model_best_recall)
 
 # find the model with the highest F1 Score
 max_f1 = max(values["F1"] for key, values in model_dic.items())
 print(max_f1)
-model_best_f1 = [model for model, precision in model_dic.items() if precision["Recall"] == max_f1]
+model_best_f1 = [model for model, f1 in model_dic.items() if f1["Recall"] == max_f1]
 print(model_best_f1)
 
 # save the model having the best F1 Score
 model_map = {"BNB":best_bnb, "LR": best_lr, "SVM": best_svm, "RF": best_rf}
-joblib.dump(model_map[model_best_f1[0]], 'best_f1_presence_classifier.joblib')
-
+# if there are more than 1 best model (have same highest F1 Score), then we use "precision" to decide:
+if len(model_best_f1) == 1:
+    joblib.dump(model_map[model_best_f1[0]], 'best_f1_presence_classifier.joblib')
+else:
+    # subset the model_dic to be the ones have the highest F1 Score
+    precision_dic = {key: value for key, value in model_dic.items() if key in model_best_f1}
+    # find the model with the highest Precision
+    sub_max_precision = max(values["Precision"] for key, values in precision_dic.items())
+    print(sub_max_precision)
+    model_sub_best_precision = [model for model, precision in precision_dic.items()
+                                if precision["Precision"] == sub_max_precision]
+    print(model_sub_best_precision)
+    if len(model_sub_best_precision) == 1:
+        joblib.dump(model_map[model_sub_best_precision[0]], 'best_precision_presence_classifier.joblib')
+# if there are more than 1 best model with same F1 Score and same Precision, then we use "Recall" to decide:
+    else:
+        recall_dic = {key: value for key, value in model_dic.items() if key in model_sub_best_precision}
+        # find the model with the highest Recall
+        sub_max_recall = max(values["Recall"] for key, values in recall_dic.items())
+        print(sub_max_recall)
+        model_sub_best_recall = [model for model, recall in model_dic.items() if recall["Recall"] == max_recall]
+        print(model_sub_best_recall)
+        if len(model_sub_best_recall) == 1:
+            joblib.dump(model_map[model_sub_best_recall[0]], 'best_recall_presence_classifier.joblib')
+        else:
+# if the best models have the same F1 Score, sampe precision, and same recall, then save them all.
+            for model_index, model in enumerate(model_best_f1):
+                filename = 'best_presence_classifier_' + str(model_index + 1)
+                joblib.dump(model_map[model], filename)
 
 
 
