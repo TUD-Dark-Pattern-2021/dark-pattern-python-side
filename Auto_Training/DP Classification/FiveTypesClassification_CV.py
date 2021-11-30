@@ -18,7 +18,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 # The difference between MultinomialNB and BernoulliNB is that while  MultinomialNB works with occurrence counts,
 # BernoulliNB is designed for binary/boolen features, which means in the case of text classification, word occurrence vectores
 # (rather than word count vectors) may be more suitable to be used to train and use this classifier.
-from sklearn.naive_bayes import BernoulliNB
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import LinearSVC
@@ -33,10 +33,8 @@ import joblib
 ### --------------------------
 
 data = pd.read_csv('enriched_data.csv')
-# Change the label into strings
-data['classification'].replace({0:'Dark',1:'Not_Dark'}, inplace = True)
 # Check the target distribution.
-print('\nDistribution of the tags:\n{}'.format(data['classification'].value_counts()))
+print('\nDistribution of the tags:\n{}'.format(data['Pattern Type'].value_counts()))
 # For later training the model, we should remove the duplicate input to reduce overfitting.
 data = data.drop_duplicates(subset="Pattern String")
 
@@ -45,7 +43,7 @@ data = data.drop_duplicates(subset="Pattern String")
 ### --------------------------
 
 # organise the predictive feature and the target value.
-Y = data['classification']
+Y = data['Pattern Type']
 X = data['Pattern String']
 
 # encode the target values into integers ---- "classification"
@@ -64,7 +62,7 @@ tv = TfidfVectorizer()
 x = tv.fit_transform(X)
 
 # save the TfidfVectorizer to disk
-joblib.dump(tv, 'presence_TfidfVectorizer.joblib')
+joblib.dump(tv, 'type_TfidfVectorizer.joblib')
 
 
 
@@ -86,7 +84,7 @@ cm = []
 for clf in classifiers:
     y_pred = cross_val_predict(clf, x, y, cv=5, n_jobs = -1)
     acc.append(metrics.accuracy_score(y, y_pred))
-    pre.append(metrics.precision_score(y,y_pred, pos_label=0))
+    pre.append(metrics.precision_score(y, y_pred, pos_label=0))
     cm.append(metrics.confusion_matrix(y, y_pred))
 
 # List the accuracies of different classifiers.
@@ -98,30 +96,30 @@ for i in range(len(classifiers)):
 
 
 ### --------------------------------------------------------------------------------------------------
-### ------------------------------------- Bernoulli Naive Bayes Classifier Training/ Parameter Tuning
+### ------------------------------------- Multinomial Naive Bayes Classifier Training/ Parameter Tuning
 ### --------------------------------------------------------------------------------------------------
 
-# setup the Bernoulli Naive Bayes classifier
-clf_bnb = BernoulliNB()
+# setup the Multinomial Naive Bayes classifier
+clf_mnb = MultinomialNB()
 # define the combination of parameters to be considered for parameter tuning
-param_grid = {'alpha':[0,1], 'fit_prior':[True, False]}
+param_grid = {'alpha':[0, 1], 'fit_prior':[True, False]}
 # Run the Grid Search
-gs = GridSearchCV(clf_bnb, param_grid, cv=5, verbose = 1, n_jobs = -1)
-best_bnb = gs.fit(x,y)
+gs = GridSearchCV(clf_mnb, param_grid, cv= 5, verbose = 1, n_jobs = -1)
+best_mnb = gs.fit(x,y)
 
 # print the result
-scores_df = pd.DataFrame(best_bnb.cv_results_)
+scores_df = pd.DataFrame(best_mnb.cv_results_)
 scores_df = scores_df.sort_values(by=['rank_test_score']).reset_index(drop='index')
 print(scores_df[['rank_test_score', 'mean_test_score', 'param_alpha', 'param_fit_prior']])
 
 # print the parameters of the best model
-print(best_bnb.best_params_)
+print(best_mnb.best_params_)
 
 # Use the best hyper-parameters to train on the whole dataset.
-bnb = best_bnb.best_estimator_.fit(x,y)
+mnb = best_mnb.best_estimator_.fit(x, y)
 
 # save the model to local disk
-joblib.dump(bnb, 'bnb_presence_classifier.joblib')
+joblib.dump(mnb, 'mnb_type_classifier.joblib')
 
 
 
@@ -150,7 +148,7 @@ print(best_svm.best_params_)
 svm = best_svm.best_estimator_.fit(x,y)
 
 # save the model to local disk
-joblib.dump(svm, 'svm_presence_classifier.joblib')
+joblib.dump(svm, 'svm_type_classifier.joblib')
 
 
 
@@ -179,7 +177,7 @@ print(best_lr.best_params_)
 lr = best_lr.best_estimator_.fit(x,y)
 
 # save the model to local disk
-joblib.dump(lr, 'lr_presence_classifier.joblib')
+joblib.dump(lr, 'lr_type_classifier.joblib')
 
 
 
@@ -213,7 +211,7 @@ print(best_rf.best_params_)
 rf = best_rf.best_estimator_.fit(x,y)
 
 # save the model to local disk
-joblib.dump(rf, 'rf_presence_classifier.joblib')
+joblib.dump(rf, 'rf_type_classifier.joblib')
 
 
 
