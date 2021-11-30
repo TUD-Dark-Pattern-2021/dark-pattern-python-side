@@ -21,11 +21,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import LinearSVC
 # Evaluation metrics
 from sklearn import metrics
-from sklearn.metrics import confusion_matrix, accuracy_score
 # joblib is a set of tools to provide lightweight pipelining in Python.
 # It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
@@ -37,6 +35,8 @@ import joblib
 data = pd.read_csv('enriched_data.csv')
 # Change the label into strings
 data['classification'].replace({0:'Dark',1:'Not_Dark'}, inplace = True)
+# Check the target distribution.
+print('\nDistribution of the tags:\n{}'.format(data['classification'].value_counts()))
 # For later training the model, we should remove the duplicate input to reduce overfitting.
 data = data.drop_duplicates(subset="Pattern String")
 
