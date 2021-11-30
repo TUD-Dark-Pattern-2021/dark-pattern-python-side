@@ -119,8 +119,11 @@ print(scores_df[['rank_test_score', 'mean_test_score', 'param_alpha', 'param_fit
 # print the parameters of the best model
 print(best_bnb.best_params_)
 
+# Use the best hyper-parameters to train on the whole dataset.
+bnb = best_bnb.best_estimator_.fit(x,y)
+
 # save the model to local disk
-joblib.dump(best_bnb, 'bnb_presence_classifier.joblib')
+joblib.dump(bnb, 'bnb_presence_classifier.joblib')
 
 
 
@@ -145,8 +148,11 @@ print(scores_df[['rank_test_score', 'mean_test_score', 'param_penalty', 'param_C
 # print the parameters of the best model
 print(best_svm.best_params_)
 
+# Use the best hyper-parameters to train on the whole dataset.
+svm = best_svm.best_estimator_.fit(x,y)
+
 # save the model to local disk
-joblib.dump(best_svm, 'svm_presence_classifier.joblib')
+joblib.dump(svm, 'svm_presence_classifier.joblib')
 
 
 
@@ -171,8 +177,11 @@ print(scores_df [['rank_test_score', 'mean_test_score', 'param_penalty', 'param_
 # print the parameters of the best model
 print(best_lr.best_params_)
 
+# Use the best hyper-parameters to train on the whole dataset.
+lr = best_lr.best_estimator_.fit(x,y)
+
 # save the model to local disk
-joblib.dump(best_lr, 'lr_presence_classifier.joblib')
+joblib.dump(lr, 'lr_presence_classifier.joblib')
 
 
 
@@ -202,8 +211,11 @@ print(scores_df [['rank_test_score', 'mean_test_score', 'param_bootstrap', 'para
 # print the parameters of the best model
 print(best_rf.best_params_)
 
+# Use the best hyper-parameters to train on the whole dataset.
+rf = best_rf.best_estimator_.fit(x,y)
+
 # save the model to local disk
-joblib.dump(best_rf, 'rf_presence_classifier.joblib')
+joblib.dump(rf, 'rf_presence_classifier.joblib')
 
 
 
