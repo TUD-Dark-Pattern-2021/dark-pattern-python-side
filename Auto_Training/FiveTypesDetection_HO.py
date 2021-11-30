@@ -37,6 +37,8 @@ import joblib
 data = pd.read_csv('enriched_data.csv')
 # Change the label into strings
 data['classification'].replace({0:'Dark',1:'Not_Dark'}, inplace = True)
+# Check the target distribution.
+print('\nDistribution of the tags:\n{}'.format(data['classification'].value_counts()))
 # For later training the model, we should remove the duplicate input to reduce overfitting.
 data = data.drop_duplicates(subset="Pattern String")
 
