@@ -27,25 +27,34 @@ def checkDP():
     j_data = json.loads(data)
 
     df = pd.DataFrame(j_data)
-    # ------ Check the 5 pattern types -------
 
-    presence_model = joblib.load('rf_presence_classifier.joblib')
-    presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
+    if df['type'][0] == "text":
+        # ------ Check the 5 pattern types -------
 
-    pre_pred = presence_model.predict(presence_cv.transform([df['content']]))
+        presence_model = joblib.load('rf_presence_classifier.joblib')
+        presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
 
-    # ------- Check the Confirmshaming DP --------
-    link_text = df.loc[df['type'].isin(['link', 'button'])]
+        prediction = presence_model.predict(presence_cv.transform(df['content']))
 
-    # Loading the saved model with joblib
-    detection_model = joblib.load('confirm_rf_clf.joblib')
-    detection_cv = joblib.load('confirm_cv.joblib')
+    elif df['type'][0] == "link" or df['type'][0] == "button":
+        # ------- Check the Confirmshaming DP --------
+        link_text = df.loc[df['type'].isin(['link', 'button'])]
 
-    # apply the pre-trained confirmshaming detection model to the button / link text data
-    pred_vec = detection_model.predict(detection_cv.transform(link_text['content']))
+        # Loading the saved model with joblib
+        detection_model = joblib.load('confirm_rf_clf.joblib')
+        detection_cv = joblib.load('confirm_cv.joblib')
+
+        # apply the pre-trained confirmshaming detection model to the button / link text data
+        prediction = detection_model.predict(detection_cv.transform(link_text['content']))
+
+    else:
+        return_result = {
+            "isDarkPattern": "The content type doesn't match this detection requirement!!!"
+        }
+        return Response(json.dumps(return_result), mimetype='application/json')
 
     # -------- Check the total detection result --------
-    if pre_pred == [0] or pred_vec == [0]:
+    if prediction == [0]:
         return_result = {
             "isDarkPattern": 'Yes'
         }
