@@ -25,11 +25,11 @@ application.add_url_rule('/', 'index', (lambda: say_hello()))
 def checkDP():
     data = request.get_data()
     j_data = json.loads(data)
-    df = pd.DataFrame(j_data)
+
     # ------ Check the 5 pattern types -------
     presence_model = joblib.load('rf_presence_classifier.joblib')
     presence_cv = joblib.load('presence_TfidfVectorizer.joblib')
-    prediction = presence_model.predict(presence_cv.transform(df['content']))
+    prediction = presence_model.predict(presence_cv.transform([j_data['content']]))
     # -------- Check the total detection result --------
     if prediction == [0]:
         return_result = {
