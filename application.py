@@ -107,7 +107,8 @@ def parse():
 
         #print(urls)
 
-
+        def get_as_base64(url):
+            return base64.b64encode(requests.get(url).content)
 
         def get_grayscale(img):
             return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
