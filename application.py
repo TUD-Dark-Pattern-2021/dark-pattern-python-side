@@ -157,10 +157,10 @@ def parse():
 
         # Loading the saved model with joblib
         detection_model = joblib.load('confirm_rf_clf.joblib')
-        detection_cv = joblib.load('confirm_cv.joblib')
+        detection_cv = joblib.load('confirm_tv.joblib')
 
         # apply the pre-trained confirmshaming detection model to the button / link text data
-        pred_vec = detection_model.predict(detection_cv.transform(link_text['content']))
+        pred_vec = detection_model.predict(detection_cv.transform(link_text['content'].str.lower()))
         link_text['presence'] = pred_vec.tolist()
 
         # dark pattern content are those where the predicted result equals to 0.
