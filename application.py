@@ -70,8 +70,8 @@ def parse():
 
     def ocr():
         # for running local
-        #if platform.system().lower() == 'windows':
-            #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
+        if platform.system().lower() == 'windows':
+            pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         #pytesseract.pytesseract.tesseract_cmd = r'C:\Users\seanq\AppData\Local\Tesseract-OCR\tesseract.exe'
         data = request.get_data()
         j_data = json.loads(data)
@@ -87,10 +87,17 @@ def parse():
         #print('work')
         urls = urlss2['content']
         #print(urls)
-        def get_grayscale(img):
-            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        def thresholding(img):
-            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+        def get_as_base64(url):
+            return base64.b64encode(requests.get(url).content)
+
+        #def get_grayscale(img):
+            #return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        #def thresholding(img):
+            #return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+
         def image_text(prep):
             return pytesseract.image_to_string(prep)
 
@@ -136,6 +143,7 @@ def parse():
 
             urlss2["content"] = urlss2["content"].map(lambda x: x.split('\n'))
             urlsss = urlss2.explode("content")
+
             #print(urlsss)
             return urlsss
         texture_detect = texture_detect(urls)
