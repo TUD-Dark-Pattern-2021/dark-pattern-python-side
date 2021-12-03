@@ -110,11 +110,11 @@ def parse():
         def get_as_base64(url):
             return base64.b64encode(requests.get(url).content)
 
-        def get_grayscale(img):
-            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        #def get_grayscale(img):
+            #return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        def thresholding(img):
-            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        #def thresholding(img):
+            #return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         def image_text(prep):
             return pytesseract.image_to_string(prep)
