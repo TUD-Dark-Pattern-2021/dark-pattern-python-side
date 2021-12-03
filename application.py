@@ -235,13 +235,16 @@ def parse():
     pre_count = dark.shape[0]
 
     # ------------------------- Pattern Type Classification ------------------
+    # when there is no dark patterns at all
     if pre_count == 0 and confirm_count == 0:
         return_result = {
             "total_counts": {},
             "items_counts": {},
             "details": []
         }
-    else:
+
+    # when there are dark patterns in any of the 5 Types DP
+    elif pre_count != 0:
         # Loading the saved model with joblib
         type_model = joblib.load('lr_type_classifier.joblib')
         type_cv = joblib.load('type_CountVectorizer.joblib')
@@ -294,6 +297,24 @@ def parse():
                     "type_name": "Confirmshaming",
                     "type_name_slug": "Confirmshaming"
                 })
+        print("return_result", return_result)
+
+    # when there is no DP in the 5 types DP, only confirmshaming DP exists
+    else:
+        return_result = {
+            "total_counts": {},
+            "items_counts": {},
+            "details": []
+        }
+        return_result["items_counts"]["Confirmshaming"] = confirm_count
+        for j in range(len(confirm_shaming)):
+            return_result["details"].append({
+                "content": confirm_shaming['content'][j],
+                "tag": confirm_shaming['tag'][j],
+                "key": confirm_shaming['key'][j],
+                "type_name": "Confirmshaming",
+                "type_name_slug": "Confirmshaming"
+            })
         print("return_result", return_result)
         # ----------------
     return Response(json.dumps(return_result), mimetype='application/json')
