@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import platform
-
+import io
 # joblib is a set of tools to provide lightweight pipelining in Python. It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
 
@@ -12,6 +12,7 @@ import shortuuid
 from PIL import Image
 import pytesseract
 import os
+import base64
 #import cv2
 
 application = Flask(__name__)
@@ -92,17 +93,17 @@ def parse():
 
         # get urls with type = image
         full = pd.DataFrame(j_data)
-        #print(full)
+        print(full)
         urlss = full.loc[full['type'] == 'image']
-        #print(urlss)
+        print(urlss)
 
         urlss.duplicated(['content'])
 
         urlss3 = urlss.drop_duplicates(['content'])
 
         urlss2 = urlss3.reset_index(drop=True)
-        #print(urlss2)
-        #print('work')
+        print(urlss2)
+        print('work')
         urls = urlss2['content']
 
         #print(urls)
@@ -110,11 +111,11 @@ def parse():
         def get_as_base64(url):
             return base64.b64encode(requests.get(url).content)
 
-        #def get_grayscale(img):
-            #return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        def get_grayscale(img):
+            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        #def thresholding(img):
-            #return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        def thresholding(img):
+            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         def image_text(prep):
             return pytesseract.image_to_string(prep)
@@ -128,39 +129,26 @@ def parse():
                 a = a + 1
                 if 'https:' not in line:
                     line = "https:" + line
-                print(line)
+                #print(line)
 
                 try:
-                    # print(line)
-                    r = requests.get(line)
-                    image_name = 'image.jpg'
-                    image_path = "./" + image_name
-                    with open(image_path, 'wb') as f:
-                        f.write(r.content)
-                    f.close()
-
-                    #img = cv2.resize(f, None, fx=2, fy=2)
+                    print(a)
+                    b64 = get_as_base64(line)
+                    #print(b64)
                     #image = cv2.imread(image_path)
-
-                    # grayscale the image
-                    #gray = get_grayscale(image)
-                    # threshold the processed image
-                    #prep = thresholding(gray)
-
-                    #filename = "{}.png".format(os.getpid())
-                    #cv2.imwrite(filename, gray)
+                    #pic = cStringIO.StringIO()
+                    image_string = io.BytesIO(base64.b64decode(b64))
+                    print('debug imagestring')
+                    image_path = Image.open(image_string)
 
                     itext = image_text(image_path)
                     #itext = image_text(Image.open(filename))
-                    os.remove(image_path)
                     #os.remove(filename)
                     # image detection
-                    # print(itext)
-
+                    print(itext)
 
                     urlss2['content'][a] = itext
                     print(itext)
-
 
                 except:
                     continue
