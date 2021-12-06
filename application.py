@@ -160,21 +160,27 @@ def parse():
         print(html)
         link_text = html.loc[html['type'].isin(['link','button'])]
 
-        # Loading the saved model with joblib
-        detection_model = joblib.load('confirm_rf_clf.joblib')
-        detection_cv = joblib.load('confirm_tv.joblib')
+        if len(link_text) != 0:
+            # Loading the saved model with joblib
+            detection_model = joblib.load('confirm_rf_clf.joblib')
+            detection_cv = joblib.load('confirm_tv.joblib')
 
-        # apply the pre-trained confirmshaming detection model to the button / link text data
-        pred_vec = detection_model.predict(detection_cv.transform(link_text['content'].str.lower()))
-        link_text['presence'] = pred_vec.tolist()
+            # apply the pre-trained confirmshaming detection model to the button / link text data
+            pred_vec = detection_model.predict(detection_cv.transform(link_text['content'].str.lower()))
+            link_text['presence'] = pred_vec.tolist()
 
-        # dark pattern content are those where the predicted result equals to 0.
-        confirm_shaming = link_text.loc[link_text['presence'] == 0]
-        confirm_shaming = confirm_shaming.reset_index(drop=True)
+            # dark pattern content are those where the predicted result equals to 0.
+            confirm_shaming = link_text.loc[link_text['presence'] == 0]
+            confirm_shaming = confirm_shaming.reset_index(drop=True)
 
-        # get the number of presence of dark pattern
-        confirm_shaming_count = confirm_shaming.shape[0]
-        print('Number of confirmshaming DP: ', confirm_shaming_count)
+            # get the number of presence of dark pattern
+            confirm_shaming_count = confirm_shaming.shape[0]
+            print('Number of confirmshaming DP: ', confirm_shaming_count)
+
+        else:
+            empty_df = pd.DataFrame()
+            confirm_shaming = empty_df
+
         return confirm_shaming
 
     confirm_shaming = confirm_shaming()
@@ -199,12 +205,13 @@ def parse():
     if presence_pred['is_ocr'][0] == 1:
         texture_detect = ocr()
         # filter type == text
-        textpp = presence_pred.loc[presence_pred['type'] == 'text']
-        combine = [textpp, texture_detect]
+        #textpp = presence_pred.loc[presence_pred['type'] == 'text']
+        #combine = [textpp, texture_detect]
+        combine = [presence_pred, texture_detect]
         presence_pred = pd.concat(combine)
 
     else:
-        presence_pred = presence_pred.loc[presence_pred['type'] == 'text']
+        presence_pred = presence_pred
 
     # Remove the rows where the first letter starting with ignoring characters
     ignore_str = [',', '.', ';', '{', '}', '#', '/', '(', ')', '?']
