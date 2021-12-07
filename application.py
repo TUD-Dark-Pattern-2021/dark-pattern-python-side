@@ -79,7 +79,7 @@ def parse():
         # get urls with type = image
         full = pd.DataFrame(j_data)
         print(full)
-        urlss = full.loc[full['tag_type'] == 'image']
+        urlss = full.loc[full['type'] == 'image']
 
         #print(urlss)
 
@@ -147,7 +147,7 @@ def parse():
         # get text with type == link or type == button
         html = pd.DataFrame(j_data)
         print(html)
-        link_text = html.loc[html['tag_type'].isin(['link','button'])]
+        link_text = html.loc[html['type'].isin(['link','button'])]
 
         if len(link_text) != 0:
             # Loading the saved model with joblib
@@ -253,12 +253,12 @@ def parse():
         # apply the model and the countvectorizer to the detected dark pattern content data
         type_pred_vec = type_model.predict(type_cv.transform(dark['content']))                   # Problem
 
-        dark['type'] = type_pred_vec.tolist()
-        type_list = dark['type'].tolist()
+        dark['classification'] = type_pred_vec.tolist()
+        type_list = dark['classification'].tolist()
 
         # get the mapping of the type name and encoded type integers
-        dark['type_name'] = [type_dic[int(type)] for type in type_list]
-        dark['type_name_slug'] = [type_slug[int(type)] for type in type_list]
+        dark['type_name'] = [type_dic[int(classification)] for classification in type_list]
+        dark['type_name_slug'] = [type_slug[int(classification)] for classification in type_list]
 
         # reset the index of the detected dark pattern list on the webpage.
         dark = dark.reset_index(drop=True)
@@ -277,7 +277,7 @@ def parse():
             return_result["details"].append({
                 "content": dark['content'][j],
                 "tag":dark['tag'][j],
-                "tag_type": dark['tag_type'][j],
+                "tag_type": dark['type'][j],
                 "key": dark['key'][j],
                 "type_name": dark['type_name'][j],
                 "type_name_slug": dark['type_name_slug'][j]
@@ -290,7 +290,7 @@ def parse():
                 return_result["details"].append({
                     "content": confirm_shaming['content'][j],
                     "tag": confirm_shaming['tag'][j],
-                    "tag_type": confirm_shaming['tag_type'][j],
+                    "tag_type": confirm_shaming['type'][j],
                     "key": confirm_shaming['key'][j],
                     "type_name": "Confirmshaming",
                     "type_name_slug": "Confirmshaming"
