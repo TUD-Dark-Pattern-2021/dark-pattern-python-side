@@ -110,7 +110,8 @@ def parse():
             a = -1
             for line in all_urls:
                 a = a + 1
-                if 'https:' not in line:
+                #(debug) if url has http domain rather than https
+                if 'http' not in line:
                     line = "https:" + line
 
                 #print(line)
