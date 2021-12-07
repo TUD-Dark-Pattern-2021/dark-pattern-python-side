@@ -309,7 +309,7 @@ def parse():
             return_result["details"].append({
                 "content": confirm_shaming['content'][j],
                 "tag": confirm_shaming['tag'][j],
-                "tag_type": confirm_shaming['tag_type'][j],
+                "tag_type": confirm_shaming['type'][j],
                 "key": confirm_shaming['key'][j],
                 "type_name": "Confirmshaming",
                 "type_name_slug": "Confirmshaming"
