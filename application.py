@@ -91,15 +91,14 @@ def parse():
         urls = urlss2['content']
         #print(urls)
 
-        def get_as_base64(url):
-            return base64.b64encode(requests.get(url).content)
+#        def get_as_base64(url):
+#            return base64.b64encode(requests.get(url).content)
 
-        def get_grayscale(img):
-            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#        def get_grayscale(img):
+#            return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        def thresholding(img):
-            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
+#        def thresholding(img):
+#            return cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         def image_text(prep):
             return pytesseract.image_to_string(prep)
@@ -116,38 +115,27 @@ def parse():
                 #print(line)
 
                 try:
-                    print(a)
-                    b64 = get_as_base64(line)
-                    #print(b64)
-                    #image = cv2.imread(image_path)
-                    #pic = cStringIO.StringIO()
-                    image_string = io.BytesIO(base64.b64decode(b64))
-                    print('debug imagestring')
-                    image_path = Image.open(image_string)
+                    r = requests.get(line)
+                    image_name = 'image.jpg'
+                    image_path = "./" + image_name
+                    with open(image_path, 'wb') as f:
+                        f.write(r.content)
+                    f.close()
 
                     itext = image_text(image_path)
-                    #itext = image_text(Image.open(filename))
-                    #os.remove(filename)
-                    # image detection
 
+                    os.remove(image_path)
 
-                    # print(itext)
                     urlss2['content'][a] = itext
                     print(itext)
-
                 except:
                     continue
 
             urlss2["content"] = urlss2["content"].map(lambda x: x.split('\n'))
             urlsss = urlss2.explode("content")
-
-            #print(urlsss)
             return urlsss
         texture_detect = texture_detect(urls)
-        #print(texture_detect)
         return texture_detect
-
-
 
     # ---------------------------  Check Confirmshaming DP --------------------------
 
