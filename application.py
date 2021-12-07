@@ -79,7 +79,7 @@ def parse():
         # get urls with type = image
         full = pd.DataFrame(j_data)
         print(full)
-        urlss = full.loc[full['type'] == 'image']
+        urlss = full.loc[full['tag_type'] == 'image']
 
         #print(urlss)
 
@@ -146,7 +146,7 @@ def parse():
         # get text with type == link or type == button
         html = pd.DataFrame(j_data)
         print(html)
-        link_text = html.loc[html['type'].isin(['link','button'])]
+        link_text = html.loc[html['tag_type'].isin(['link','button'])]
 
         if len(link_text) != 0:
             # Loading the saved model with joblib
@@ -276,6 +276,7 @@ def parse():
             return_result["details"].append({
                 "content": dark['content'][j],
                 "tag":dark['tag'][j],
+                "tag_type": dark['tag_type'][j],
                 "key": dark['key'][j],
                 "type_name": dark['type_name'][j],
                 "type_name_slug": dark['type_name_slug'][j]
@@ -288,6 +289,7 @@ def parse():
                 return_result["details"].append({
                     "content": confirm_shaming['content'][j],
                     "tag": confirm_shaming['tag'][j],
+                    "tag_type": confirm_shaming['tag_type'][j],
                     "key": confirm_shaming['key'][j],
                     "type_name": "Confirmshaming",
                     "type_name_slug": "Confirmshaming"
@@ -306,6 +308,7 @@ def parse():
             return_result["details"].append({
                 "content": confirm_shaming['content'][j],
                 "tag": confirm_shaming['tag'][j],
+                "tag_type": confirm_shaming['tag_type'][j],
                 "key": confirm_shaming['key'][j],
                 "type_name": "Confirmshaming",
                 "type_name_slug": "Confirmshaming"
