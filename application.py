@@ -354,13 +354,13 @@ def autoTrain():
 
     bucket_name = j_data['bucket']
     object_key = j_data['csv']
-    path = 's3:/{}/{}'.format(bucket_name, object_key)
+    path = 's3://{}/{}'.format(bucket_name, object_key)
 
-    data = pd.read_csv(smart_open(path))
+    dataset = pd.read_csv(smart_open(path))
     # Check the target distribution.
-    print('\nDistribution of the tags:\n{}'.format(data['Pattern_Type'].value_counts()))
+    print('\nDistribution of the tags:\n{}'.format(dataset['Pattern_Type'].value_counts()))
     # For later training the model, we should remove the duplicate input to reduce overfitting.
-    data = data.drop_duplicates(subset="Pattern_String")
+    dataset = dataset.drop_duplicates(subset="Pattern_String")
 
     ### --------------------------
     ### ------Data Preparation
@@ -368,7 +368,7 @@ def autoTrain():
 
     # split the dataset into train and test dataset as a ratio of 80%/20% (train/test).
     String_train, String_test, Type_train, Type_test = train_test_split(
-        data['Pattern_String'], data['Pattern_Type'], train_size=.8)
+        dataset['Pattern_String'], dataset['Pattern_Type'], train_size=.8)
 
     # encode the target values into integers ---- "classification"
     encoder = LabelEncoder()
@@ -404,7 +404,6 @@ def autoTrain():
     classifiers = [LogisticRegression(), LinearSVC(), RandomForestClassifier(), MultinomialNB()]
     # Calculate the accuracies of different classifiers using default settings.
     acc = []
-    pre = []
     cm = []
     for clf in classifiers:
         clf.fit(x_train, y_train)
