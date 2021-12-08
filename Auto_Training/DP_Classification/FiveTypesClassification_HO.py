@@ -31,7 +31,7 @@ import joblib
 ### ------Dataset Import
 ### --------------------------
 
-data = pd.read_csv('enriched_data.csv')
+data = pd.read_csv('labeled_df.csv')
 # Check the target distribution.
 print('\nDistribution of the tags:\n{}'.format(data['Pattern Type'].value_counts()))
 # For later training the model, we should remove the duplicate input to reduce overfitting.
@@ -87,13 +87,11 @@ for clf in classifiers:
     clf.fit(x_train, y_train)
     y_pred = clf.predict(x_test)
     acc.append(metrics.accuracy_score(y_test, y_pred))
-    pre.append(metrics.precision_score(y_test, y_pred, pos_label=0))
     cm.append(metrics.confusion_matrix(y_test, y_pred))
 
 # List the accuracies of different classifiers.
 for i in range(len(classifiers)):
     print("{} accuracy: {:.3f}".format(classifiers[i],acc[i]))
-    print("{} precision: {:.3f}".format(classifiers[i],pre[i]))
     print("Confusion Matrix: {}".format(cm[i]))
 
 
@@ -120,14 +118,8 @@ y_pred_best = best_mnb.predict(x_test)
 
 # metrics of evaluation
 mnb_accuracy = metrics.accuracy_score(y_test, y_pred_best)
-mnb_precision = metrics.precision_score(y_test,y_pred_best, pos_label=0)
 mnb_cm = metrics.confusion_matrix(y_test, y_pred_best)
-mnb_recall = cm[0][0]/(cm[0][0]+cm[0][1])
-mnb_f1 = 2*mnb_precision*mnb_recall/(mnb_recall+mnb_precision)
 print("Accuracy (MNB):", mnb_accuracy)
-print("Precision (MNB):", mnb_precision)
-print("Recall (MNB):", mnb_recall)
-print("F1 Score (MNB):", mnb_f1)
 print("Confusion Matrix (MNB):\n", mnb_cm)
 
 # print the distribution of the prediction result on the test dataset
@@ -136,7 +128,7 @@ frequencies = np.asarray((unique, counts)).T
 print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
 # save the model to local disk
-joblib.dump(best_mnb, 'mnb_type_classifier.joblib')
+#joblib.dump(best_mnb, 'mnb_type_classifier.joblib')
 
 
 
@@ -163,14 +155,8 @@ y_pred_best = best_svm.predict(x_test)
 
 # metrics of evaluation
 svm_accuracy = metrics.accuracy_score(y_test, y_pred_best)
-svm_precision = metrics.precision_score(y_test, y_pred_best, pos_label=0)
 svm_cm = metrics.confusion_matrix(y_test, y_pred_best)
-svm_recall = cm[0][0]/(cm[0][0]+cm[0][1])
-svm_f1 = 2*svm_precision*svm_recall/(svm_recall+svm_precision)
 print("Accuracy (RF):", svm_accuracy)
-print("Precision (RF):", svm_precision)
-print("Recall (RF):", svm_recall)
-print("F1 Score (RF):", svm_f1)
 print("Confusion Matrix (RF):\n", svm_cm)
 
 # print the distribution of the prediction result on the test dataset
@@ -179,7 +165,7 @@ frequencies = np.asarray((unique, counts)).T
 print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
 # save the model to local disk
-joblib.dump(best_svm, 'svm_type_classifier.joblib')
+#joblib.dump(best_svm, 'svm_type_classifier.joblib')
 
 
 
@@ -206,14 +192,8 @@ y_pred_best = best_lr.predict(x_test)
 
 # metrics of evaluation
 lr_accuracy = metrics.accuracy_score(y_test, y_pred_best)
-lr_precision = metrics.precision_score(y_test, y_pred_best, pos_label=0)
 lr_cm = metrics.confusion_matrix(y_test, y_pred_best)
-lr_recall = cm[0][0]/(cm[0][0]+cm[0][1])
-lr_f1 = 2*lr_precision*lr_recall/(lr_recall+lr_precision)
 print("Accuracy (RF):", lr_accuracy)
-print("Precision (RF):", lr_precision)
-print("Recall (RF):", lr_recall)
-print("F1 Score (RF):", lr_f1)
 print("Confusion Matrix (RF):\n", lr_cm)
 
 # print the distribution of the prediction result on the test dataset
@@ -222,7 +202,7 @@ frequencies = np.asarray((unique, counts)).T
 print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
 # save the model to local disk
-joblib.dump(best_lr, 'lr_type_classifier.joblib')
+#joblib.dump(best_lr, 'lr_type_classifier.joblib')
 
 
 
@@ -235,10 +215,10 @@ clf_rf = RandomForestClassifier().fit(x_train, y_train)
 # define the combination of parameters to be considered for parameter tuning
 param_grid = {'bootstrap':[True,False],
               'criterion':['gini','entropy'],
-              'max_depth':[10,20,30,40,50,60,70,80,90,100, None],
-              'min_samples_leaf':[1,2,4],
-              'min_samples_split':[2,5,10],
-              'n_estimators':[100,200,300,400,500,600]}
+              'max_depth':[10,None],
+              'min_samples_leaf':[1,2],
+              'min_samples_split':[2,5],
+              'n_estimators':[100,200]}
 # Run the Grid Search
 gs = GridSearchCV(clf_rf,param_grid, cv=5, verbose = 1, n_jobs = -1)
 best_rf = gs.fit(x_train,y_train)
@@ -254,14 +234,8 @@ y_pred_best = best_rf.predict(x_test)
 
 # metrics of evaluation
 rf_accuracy = metrics.accuracy_score(y_test, y_pred_best)
-rf_precision = metrics.precision_score(y_test, y_pred_best, pos_label=0)
 rf_cm = metrics.confusion_matrix(y_test, y_pred_best)
-rf_recall = cm[0][0]/(cm[0][0]+cm[0][1])
-rf_f1 = 2*rf_precision*rf_recall/(rf_recall+rf_precision)
 print("Accuracy (RF):", rf_accuracy)
-print("Precision (RF):", rf_precision)
-print("Recall (RF):", rf_recall)
-print("F1 Score (RF):", rf_f1)
 print("Confusion Matrix (RF):\n", rf_cm)
 
 # print the distribution of the prediction result on the test dataset
@@ -270,7 +244,7 @@ frequencies = np.asarray((unique, counts)).T
 print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
 # save the model to local disk
-joblib.dump(best_rf, 'rf_type_classifier.joblib')
+#joblib.dump(best_rf, 'rf_type_classifier.joblib')
 
 
 ### --------------------------------------------------------------------------------------------------
@@ -279,60 +253,28 @@ joblib.dump(best_rf, 'rf_type_classifier.joblib')
 
 # create the dictionary gathering the information of the models trained
 # format as [Accuracy, Precision, Recall, F1 Score]
-model_dic = {"MNB": {"Accuracy": mnb_accuracy, "Precision": mnb_precision, "Recall": mnb_recall, "F1": mnb_f1},
-             "LR":{"Accuracy": lr_accuracy, "Precision": lr_precision, "Recall": lr_recall, "F1": lr_f1},
-             "SVM":{"Accuracy": svm_accuracy, "Precision": svm_precision, "Recall": svm_recall, "F1": svm_f1},
-             "RF":{"Accuracy": rf_accuracy, "Precision": rf_precision, "Recall": rf_recall, "F1": rf_f1}}
+model_dic = {"MNB": {"Accuracy": mnb_accuracy},
+             "LR":{"Accuracy": lr_accuracy},
+             "SVM":{"Accuracy": svm_accuracy},
+             "RF":{"Accuracy": rf_accuracy}}
 
-# find the model with the highest Precision
-max_precision = max(values["Precision"] for key, values in model_dic.items())
-print(max_precision)
-model_best_precision = [model for model, precision in model_dic.items() if precision["Precision"] == max_precision]
-print(model_best_precision)
+# find the model with the highest Accuracy
+max_accuracy = max(values["Accuracy"] for key, values in model_dic.items())
+print(max_accuracy)
+model_best_accuracy = [model for model, accuracy in model_dic.items() if accuracy["Accuracy"] == max_accuracy]
+print(model_best_accuracy)
 
-# find the model with the highest Recall
-max_recall = max(values["Recall"] for key, values in model_dic.items())
-print(max_recall)
-model_best_recall = [model for model, recall in model_dic.items() if recall["Recall"] == max_recall]
-print(model_best_recall)
-
-# find the model with the highest F1 Score
-max_f1 = max(values["F1"] for key, values in model_dic.items())
-print(max_f1)
-model_best_f1 = [model for model, f1 in model_dic.items() if f1["Recall"] == max_f1]
-print(model_best_f1)
 
 # save the model having the best F1 Score
 model_map = {"MNB":best_mnb, "LR": best_lr, "SVM": best_svm, "RF": best_rf}
-# if there are more than 1 best model (have same highest F1 Score), then we use "precision" to decide:
-if len(model_best_f1) == 1:
-    joblib.dump(model_map[model_best_f1[0]], 'best_f1_type_classifier.joblib')
+
+if len(model_best_accuracy) == 1:
+    joblib.dump(model_map[model_best_accuracy[0]], 'best_accuracy_type_classifier.joblib')
 else:
-    # subset the model_dic to be the ones have the highest F1 Score
-    precision_dic = {key: value for key, value in model_dic.items() if key in model_best_f1}
-    # find the model with the highest Precision
-    sub_max_precision = max(values["Precision"] for key, values in precision_dic.items())
-    print(sub_max_precision)
-    model_sub_best_precision = [model for model, precision in precision_dic.items()
-                                if precision["Precision"] == sub_max_precision]
-    print(model_sub_best_precision)
-    if len(model_sub_best_precision) == 1:
-        joblib.dump(model_map[model_sub_best_precision[0]], 'best_precision_type_classifier.joblib')
-# if there are more than 1 best model with same F1 Score and same Precision, then we use "Recall" to decide:
-    else:
-        recall_dic = {key: value for key, value in model_dic.items() if key in model_sub_best_precision}
-        # find the model with the highest Recall
-        sub_max_recall = max(values["Recall"] for key, values in recall_dic.items())
-        print(sub_max_recall)
-        model_sub_best_recall = [model for model, recall in model_dic.items() if recall["Recall"] == max_recall]
-        print(model_sub_best_recall)
-        if len(model_sub_best_recall) == 1:
-            joblib.dump(model_map[model_sub_best_recall[0]], 'best_recall_type_classifier.joblib')
-        else:
 # if the best models have the same F1 Score, sampe precision, and same recall, then save them all.
-            for model_index, model in enumerate(model_best_f1):
-                filename = 'best_type_classifier_' + str(model_index + 1)
-                joblib.dump(model_map[model], filename)
+    for model_index, model in enumerate(model_best_accuracy):
+        filename = 'best_type_classifier_' + str(model_index + 1)
+        joblib.dump(model_map[model], filename)
 
 
 
