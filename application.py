@@ -22,6 +22,7 @@ from sklearn import metrics
 # joblib is a set of tools to provide lightweight pipelining in Python.
 # It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
 import joblib
+import datetime
 
 from flask import Flask, request, Response
 import json
@@ -368,7 +369,7 @@ def autoTrain():
 
     # split the dataset into train and test dataset as a ratio of 80%/20% (train/test).
     String_train, String_test, Type_train, Type_test = train_test_split(
-        dataset['Pattern_String'], dataset['Pattern_Type'], train_size=.8)
+        dataset['Pattern_String'], dataset['Pattern_Type'], train_size=.8, random_state=22)
 
     # encode the target values into integers ---- "classification"
     encoder = LabelEncoder()
@@ -390,7 +391,9 @@ def autoTrain():
     x_test = tv.transform(String_test)
 
     # save the TfidfVectorizer to disk
-    joblib.dump(tv, 'type_TfidfVectorizer.joblib')
+    filename = 'Auto_Training/Models/type_TfidfVectorizer_' + str(datetime.datetime.now().date()) + '_' \
+                   + str(datetime.datetime.now().time()).replace(':', '.') + '.joblib'
+    joblib.dump(tv, filename)
 
     ### --------------------------------------------------------------------------------------------------
     ### ------Rough Idea about the performance of different classifiers
@@ -447,8 +450,6 @@ def autoTrain():
     frequencies = np.asarray((unique, counts)).T
     print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
-    # save the model to local disk
-    # joblib.dump(best_mnb, 'mnb_type_classifier.joblib')
 
     ### --------------------------------------------------------------------------------------------------
     ### ------------------------------------- Support Vector Machine Classifier Training/ Parameter Tuning
@@ -482,9 +483,6 @@ def autoTrain():
     frequencies = np.asarray((unique, counts)).T
     print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
-    # save the model to local disk
-    # joblib.dump(best_svm, 'svm_type_classifier.joblib')
-
     ### --------------------------------------------------------------------------------------------------
     ### ------------------------------------- Logistic Regression Classifier Training/ Parameter Tuning
     ### --------------------------------------------------------------------------------------------------
@@ -516,9 +514,6 @@ def autoTrain():
     (unique, counts) = np.unique(y_pred_best, return_counts=True)
     frequencies = np.asarray((unique, counts)).T
     print('The distribution of predicted result of the best model:{}'.format(frequencies))
-
-    # save the model to local disk
-    # joblib.dump(best_lr, 'lr_type_classifier.joblib')
 
     ### --------------------------------------------------------------------------------------------------
     ### ------------------------------------- Random Forest Classifier Training/ Parameter Tuning
@@ -557,9 +552,6 @@ def autoTrain():
     frequencies = np.asarray((unique, counts)).T
     print('The distribution of predicted result of the best model:{}'.format(frequencies))
 
-    # save the model to local disk
-    # joblib.dump(best_rf, 'rf_type_classifier.joblib')
-
     ### --------------------------------------------------------------------------------------------------
     ### ------------------------------------- Model Selection for Deploy
     ### --------------------------------------------------------------------------------------------------
@@ -581,12 +573,20 @@ def autoTrain():
     model_map = {"MNB": best_mnb, "LR": best_lr, "SVM": best_svm, "RF": best_rf}
 
     if len(model_best_accuracy) == 1:
-        joblib.dump(model_map[model_best_accuracy[0]], 'best_accuracy_type_classifier.joblib')
+        filename = 'Auto_Training/Models/best_type_classifier_' + str(datetime.datetime.now().date()) + '_' \
+                   + str(datetime.datetime.now().time()).replace(':', '.') + '.joblib'
+        joblib.dump(model_map[model_best_accuracy[0]], filename)
     else:
         # if the best models have the same F1 Score, sampe precision, and same recall, then save them all.
         for model_index, model in enumerate(model_best_accuracy):
-            filename = 'best_type_classifier_' + str(model_index + 1)
+            filename = 'Auto_Training/Models/best_type_classifier_' + str(model_index + 1) \
+                       + str(datetime.datetime.now().date()) + '_' \
+                       + str(datetime.datetime.now().time()).replace(':', '.') + '.joblib'
             joblib.dump(model_map[model], filename)
+
+    return_result = {
+        "status": 200
+    }
 
     return Response(json.dumps(return_result), mimetype='application/json')
 
