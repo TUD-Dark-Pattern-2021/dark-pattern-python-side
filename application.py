@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import platform
+
 import io
 
 from smart_open import smart_open
@@ -21,6 +22,10 @@ from sklearn.svm import LinearSVC
 from sklearn import metrics
 # joblib is a set of tools to provide lightweight pipelining in Python.
 # It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
+
+import urllib.request
+# joblib is a set of tools to provide lightweight pipelining in Python. It provides utilities for saving and loading Python objects that make use of NumPy data structures, efficiently.
+
 import joblib
 import datetime
 
@@ -31,8 +36,7 @@ import shortuuid
 from PIL import Image
 import pytesseract
 import os
-import base64
-#import cv2
+import cv2
 
 application = Flask(__name__)
 
@@ -135,16 +139,13 @@ def parse():
                 #print(line)
 
                 try:
-                    r = requests.get(line)
-                    image_name = 'image.jpg'
-                    image_path = "./" + image_name
-                    with open(image_path, 'wb') as f:
-                        f.write(r.content)
-                    f.close()
+                    print(a)
+                    img_resp = urllib.request.urlopen(line)
+                    img = np.asarray(bytearray(img_resp.read()), dtype='uint8')
+                    img = cv2.imdecode(img, cv2.IMREAD_COLOR)
 
-                    itext = image_text(image_path)
 
-                    os.remove(image_path)
+                    itext = image_text(img)
 
                     urlss2['content'][a] = itext
                     print(itext)
