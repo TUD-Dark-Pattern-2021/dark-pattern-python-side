@@ -266,8 +266,8 @@ def parse():
 #        type_cv = joblib.load('type_CountVectorizer.joblib')
 
         # testing auto-training result
-        type_model = joblib.load('best_type_classifier_2021-12-08_18.54.34.817939.joblib')
-        type_cv = joblib.load('type_TfidfVectorizer_2021-12-08_18.54.15.647610.joblib')
+        type_model = joblib.load('lr_type_classifier.joblib')
+        type_cv = joblib.load('type_CountVectorizer.joblib')
 
         # mapping of the encoded dark pattern types.
         type_dic = {0:'FakeActivity', 1:'FakeCountdown', 2:'FakeHighDemand', 3:'FakeLimitedTime', 4:'FakeLowStock'}
