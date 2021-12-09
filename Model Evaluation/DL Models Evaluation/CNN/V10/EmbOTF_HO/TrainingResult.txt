@@ -1,5 +1,0 @@
-best:
-model2
-
-second-best:
-model1
