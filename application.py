@@ -364,7 +364,7 @@ def autoTrain():
 
     dataset = pd.read_csv(smart_open(path))
     # Check the target distribution.
-    print('\nDistribution of the tags:\n{}'.format(dataset['Pattern_Type'].value_counts()))
+    print('\nDistribution of the tags:\n{}'.format(dataset['Pattern_Type:'].value_counts()))
     # For later training the model, we should remove the duplicate input to reduce overfitting.
     dataset = dataset.drop_duplicates(subset="Pattern_String")
 
@@ -374,7 +374,7 @@ def autoTrain():
 
     # split the dataset into train and test dataset as a ratio of 80%/20% (train/test).
     String_train, String_test, Type_train, Type_test = train_test_split(
-        dataset['Pattern_String'], dataset['Pattern_Type'], train_size=.8, random_state=22)
+        dataset['Pattern_String'], dataset['Pattern_Type:'], train_size=.8, random_state=22)
 
     # encode the target values into integers ---- "classification"
     encoder = LabelEncoder()
