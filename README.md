@@ -1,3 +1,8 @@
+# Training Code + Evaluation Code
+
+To speed up the deployment process of the python service, we trasnfered the unused code, models and dataset onto the Google Drive, please go to the link below for reference:
+https://drive.google.com/file/d/1A-Pzn7J83Ebh5T_5JTcPvXW5SLIDWpTQ/view?usp=sharing
+
 # Detection_Pipeline
 
 The 'application.py' is the detection process, including both dark pattern detection to dark pattern type classification.
