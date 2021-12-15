@@ -36,7 +36,7 @@ import shortuuid
 from PIL import Image
 import pytesseract
 import os
-import cv2
+# import cv2
 
 application = Flask(__name__)
 
@@ -139,16 +139,22 @@ def parse():
                 #print(line)
 
                 try:
-                    print(a)
-                    img_resp = urllib.request.urlopen(line)
-                    img = np.asarray(bytearray(img_resp.read()), dtype='uint8')
-                    img = cv2.imdecode(img, cv2.IMREAD_COLOR)
+                    r = requests.get(line)
+                    image_name = 'image.jpg'
+                    image_path = "./" + image_name
+                    with open(image_path, "wb") as f:
+                        f.write(r.content)
+                    f.close
 
+                    itext = image_text(image_path)
 
-                    itext = image_text(img)
+                    os.remove(image_path)
+
+                    # itext = image_text(img)
 
                     urlss2['content'][a] = itext
                     print(itext)
+
                 except:
                     continue
 
