@@ -1,0 +1,429 @@
+content
+"typeof uex === 'function' && uex('ld', 'portal-bb', {wb: 1})"
+"window.ue && ue.count && ue.count('CSMLibrarySize', 13090)"
+Select Your Cookie Preferences
+"We use cookies and similar tools that are necessary to enable you to make purchases, to enhance your shopping experiences and to provide our services, as detailed in our"
+Cookie Notice
+"If you agree, we’ll also use cookies to complement your shopping experience across the Amazon stores as described in our"
+Cookie Notice
+third-party cookies
+Cookie Preferences
+Privacy Notice
+"Sorry, there was a problem saving your cookie preferences. Try again."
+Accept Cookies
+Customise Cookies
+"!function(n){function e(n,e){return{m:n,a:function(n){return[].slice.call(n)}(e)}}document.createElement(""header"");var r=function(n){function u(n,r,u){n[u]=function(){a._replay.push(r.concat(e(u,arguments)))}}var a={};return a._sourceName=n,a._replay=[],a.getNow=function(n,e){return e},a.when=function(){var n=[e(""when"",arguments)],r={};return u(r,n,""run""),u(r,n,""declare""),u(r,n,""publish""),u(r,n,""build""),r},u(a,[],""declare""),u(a,[],""build""),u(a,[],""publish""),u(a,[],""importEvent""),r._shims.push(a),a};r._shims=[],n.$Nav||(n.$Nav=r(""rcx-nav"")),n.$Nav.make||(n.$Nav.make=r)}(window)"
+"$Nav.importEvent('navbarJS-beaconbelt');$Nav.declare('img.sprite', {  'png32': 'https://images-eu.ssl-images-amazon.com/images/G/02/gno/sprites/nav-sprite-global-1x-hm-dsk-reorg._CB405938116_.png',  'png32-2x': 'https://images-eu.ssl-images-amazon.com/images/G/02/gno/sprites/nav-sprite-global-2x-hm-dsk-reorg._CB405938119_.png'});$Nav.declare('img.timeline', {  'timeline-icon-2x': 'https://images-eu.ssl-images-amazon.com/images/G/02/gno/sprites/timeline_sprite_2x._CB443581191_.png'});window._navbarSpriteUrl = 'https://images-eu.ssl-images-amazon.com/images/G/02/gno/sprites/nav-sprite-global-1x-hm-dsk-reorg._CB405938116_.png';$Nav.declare('img.pixel', 'https://images-eu.ssl-images-amazon.com/images/G/02/x-locale/common/transparent-pixel._CB485934990_.gif');"
+var nav_t_after_preload_sprite = + new Date();
+"(window.AmazonUIPageJS ? AmazonUIPageJS : P).when('navCF').execute(function() {  (window.AmazonUIPageJS ? AmazonUIPageJS : P).load.js('https://images-eu.ssl-images-amazon.com/images/I/41cyy9szMwL._RC|71Pcz5jpojL.js,01Grm040PgL.js,016tgkOMMNL.js,713U89tpFnL.js,41gNKoK0s7L.js,11xzSqjDFVL.js,21OvMADkJYL.js,11k47yUMOjL.js,41SZNgvX4oL.js,51pktuVkksL.js,31sq3pfde4L.js,01KW1GJCT1L.js,31SNsrS+UrL.js_.js?AUIClients/NavDesktopUberAsset&M2dPLHSf#desktop.language-en.gb.365419-T1.377261-T1.341648-T1');});"
+window.navmet.tmp=+new Date();
+div#navSwmHoliday.nav-focus {border: none;margin: 0;}
+"window.navmet.push({key:'PreNav',end:+new Date(),begin:window.navmet.tmp});"
+Skip to main content
+window.navmet.tmp=+new Date();
+"window.navmet.push({key:'UpNav',end:+new Date(),begin:window.navmet.tmp});"
+window.navmet.main=+new Date();
+window.navmet.tmp=+new Date();
+"window.navmet.push({key:'Logo',end:+new Date(),begin:window.navmet.tmp});"
+Deliver to
+"Ireland, Republic of"
+window.navmet.tmp=+new Date();
+Select the department you want to search in
+All Departments
+Alexa Skills
+Amazon Devices
+Amazon Global Store
+Amazon Warehouse
+Apps & Games
+Audible Audiobooks
+Car & Motorbike
+CDs & Vinyl
+Classical Music
+Computers & Accessories
+Digital Music
+DIY & Tools
+DVD & Blu-ray
+Electronics & Photo
+Garden & Outdoors
+Gift Cards
+Health & Personal Care
+Home & Business Services
+Home & Kitchen
+Industrial & Scientific
+Kindle Store
+Large Appliances
+Musical Instruments & DJ Equipment
+PC & Video Games
+Pet Supplies
+Premium Beauty
+Prime Video
+Shoes & Bags
+Sports & Outdoors
+Stationery & Office Supplies
+Toys & Games
+"window.navmet.push({key:'Search',end:+new Date(),begin:window.navmet.tmp});"
+window.navmet.tmp=+new Date();
+"Hello, Sign in"
+Account & Lists
+& Orders
+"window.navmet.push({key:'Tools',end:+new Date(),begin:window.navmet.tmp});"
+Sign in
+New customer?
+Start here.
+Your Lists
+Find a Gift
+Create a List
+Save Items from the Web
+Wedding List
+Baby Wishlist
+Kids' Wish List
+Discover Your Style
+Explore Showroom
+Your Account
+Your Account
+Your Orders
+Your Lists
+Your Recommendations
+Your Subscribe & Save Items
+Your Gift Card Balance
+Your Pets
+Memberships & Subscriptions
+Your Prime Membership
+Register for a Business Account
+Manage Your Content and Devices
+Your Kindle Unlimited
+Your Music Subscriptions
+Your Music
+Your Amazon Drive
+Your Prime Video
+Your Watchlist
+Your Video Purchases & Rentals
+Your Games and Software Library
+Your Apps & Devices
+Sign in
+New customer?
+Start here.
+window.navmet.tmp=+new Date();
+"var hmenu = document.getElementById(""nav-hamburger-menu"");  hmenu.setAttribute(""href"", ""javascript: void(0)"");  window.navHamburgerMetricLogger = function() {    if (window.ue && window.ue.count) {      var metricName = ""Nav:Hmenu:IconClickActionPending"";      window.ue.count(metricName, (ue.count(metricName) || 0) + 1);    }    window.$Nav && $Nav.declare(""navHMenuIconClicked"",!0);    window.$Nav && $Nav.declare(""navHMenuIconClickedNotReadyTimeStamp"", Date.now());  };  hmenu.addEventListener(""click"", window.navHamburgerMetricLogger);  window.$Nav && $Nav.declare('hamburgerMenuIconAvailableOnLoad', false);"
+"window.navmet.push({key:'HamburgerMenuIcon',end:+new Date(),begin:window.navmet.tmp});"
+window.navmet.tmp=+new Date();
+Best Sellers
+Customer Service
+Gift Ideas
+Today's Deals
+New Releases
+PC & Video Games
+Home & Garden
+Gift Cards & Top Up
+Toys & Games
+Sports & Outdoors
+Health & Personal Care
+Pet Supplies
+Car & Motorbike
+Kindle Books
+Prime Video
+Shopper Toolkit
+Free Delivery
+Subscribe & Save
+Wish Lists
+Sell on Amazon
+Disability Customer Support
+"window.navmet.push({key:'CrossShop',end:+new Date(),begin:window.navmet.tmp});"
+window.navmet.tmp=+new Date();
+"window.navmet.push({key:'SWM',end:+new Date(),begin:window.navmet.tmp});"
+window.navmet.tmp=+new Date();
+KIDS & BABY
+"window.navmet.push({key:'Subnav',end:+new Date(),begin:window.navmet.tmp});"
+"window.navmet.push({key:'NavBar',end:+new Date(),begin:window.navmet.main});"
+"if (window.ue_t0) {    window.navmet.push({key:""NavMainPaintEnd"",end:+new Date(),begin:window.ue_t0});    window.navmet.push({key:""NavFirstPaintEnd"",end:+new Date(),begin:window.ue_t0});  }"
+window.navmet.MainEnd = new Date();
+"if (window.ue_t0) {      window.navmet.push({key:""NavMainEnd"",end:+new Date(),begin:window.ue_t0});    }"
+"P.declare('s\-clean\-url', ""\/s?rh=n%3A26992796031\x26fs=true\x26pf_rd_i=11961407031\x26pf_rd_m=A3P5ROKL5A1OLE\x26pf_rd_p=1204d300\-a921\-41db\-b440\-3d9d98a923e2\x26pf_rd_r=3K27EQ4G8VSZVYFQNYN8\x26pf_rd_s=merchandised\-search\-4\x26pf_rd_t=101\x26ref=lp_26992796031_sar"");"
+"P.declare('s\-device\-env', ""WEB"");"
+"P.declare('aapi\-token\-dcp', ""1@gw+us926H9asLC\/UybddwHRXZhFXUZMXW\/ORVfo0+n\/cAAAAAQAAAABhZ0QQcmF3AAAAAGfA1H5nd8xGEcC32Fh1BA==@NFT8IE"");"
+"P.declare('s\-swrs\-version', ""770D8F92960DABF3DEAEC9F84B1FA0EB,D41D8CD98F00B204E9800998ECF8427E"");"
+"P.declare('s\-optimized\-pagination\-enabled', true);"
+"P.declare('s\-optimized\-pagination\-config', {""prefetchTargetIndex"":0,""enabled"":true});"
+"P.declare('s\-navbar\-prefetch\-config', {""pasteEnabled"":false,""pauseEnabled"":false,""pauseTimeout"":0,""minKeywordLen"":0});"
+"P.declare('s\-ajax\-calls\-via\-http\-post\-enabled', true);"
+"P.declare('s\-ajax\-customer\-action\-flagging\-enabled', true);"
+"P.declare('s\-metadata', {""totalResultCount"":120,""asinOnPageCount"":48,""searchAlias"":""fashion"",""keywords"":"""",""store"":""apparel"",""merchantId"":"""",""merchantName"":"""",""placeholderText"":"""",""rid"":""9FRTFG8QN8B3Z1S9XH6Y"",""page"":1,""rescopeParameter"":""n"",""rescopeNode"":""26992796031""});"
+1-48 of 120 results
+Sort by:
+Price: Low to High
+Price: High to Low
+Avg. Customer Review
+Newest Arrivals
+Sort by:
+Price and other details may vary based on product size and colour.
+The Drop
+Amazon Brand - Women's Diana Top Handle Crossbody Bag by The Drop
+4.2 out of 5 stars
+FREE Delivery by Amazon
+United Colors of Benetton
+Women's Winter Accessory Set (Pack of 2)
+FREE Delivery by Amazon
+Women's Vest_Perugia Casual Dress
+5.0 out of 5 stars
+FREE Delivery by Amazon
+Women's Fashion Scarf
+FREE Delivery by Amazon
+Women's Sweater
+FREE Delivery by Amazon
+"Women's GEN 6 Touchscreen Smartwatch with Speaker, Heart Rate, NFC, and Smartphone Notifications"
+Get it
+"Tuesday, Oct 19"
+"Friday, Oct 22"
+Women's Wool Trucker Jacket
+FREE Delivery by Amazon
+The Drop
+Women's Bella Small Tote Bag
+4.3 out of 5 stars
+FREE Delivery by Amazon
+Women's Samireeny Cardigan Sweater
+FREE Delivery by Amazon
+Women's Trousers
+FREE Delivery by Amazon
+Women's Puma Vikky Stacked L Sneaker
+4.3 out of 5 stars
+FREE Delivery by Amazon
+Women's Ts_Kyoto T-Shirt
+FREE Delivery by Amazon
+Noisy May
+Women's Nmtimmy L/S Knit Cardigan Noos
+FREE Delivery by Amazon
+Women's Onlaurelia Sherpa Coat OTW
+4.1 out of 5 stars
+FREE Delivery by Amazon
+Women's Pcbera Wool Hood Noos Beanie Hat
+FREE Delivery by Amazon
+Women's W Chunky Rib Beanie
+4.3 out of 5 stars
+FREE Delivery by Amazon
+Women's World Wide Jeans
+FREE Delivery by Amazon
+Creole earrings
+Pepe Jeans
+Women's Bettle City Fashion Boot
+3.0 out of 5 stars
+£10.71 delivery
+"Women's 201.10.107.25.300.2105852 Shopper, 99a2, 33 x 11 x 37,5 cm"
+FREE Delivery by Amazon
+The Drop
+Women's Josie Drawstring Bucket Bag
+FREE Delivery by Amazon
+Women's Icelin_Runn_nyzb Sneaker
+FREE Delivery by Amazon
+Liebeskind Berlin
+"Women's Trudie Satchel Medium, M"
+FREE Delivery by Amazon
+Women's N49c2-40 Low-Top Sneakers
+4.6 out of 5 stars
+FREE Delivery by Amazon
+Women's 1-1-25425-27 Chelsea Boot
+FREE Delivery by Amazon
+Women's Angel Gore-tex with Light Lining Ankle Boot
+FREE Delivery by Amazon
+Liebeskind Berlin
+"Women's Clarice Hobo Medium, M"
+FREE Delivery by Amazon
+Liebeskind Berlin
+"Women's Trudie Satchel Large, L"
+FREE Delivery by Amazon
+Marc O'Polo
+Women's Mela 1a Chukka Boot
+Women's Viril Crew Neck L/S Midi Dress-Noos
+FREE Delivery by Amazon
+Women's Achiever Knee High Boot
+2.0 out of 5 stars
+FREE Delivery by Amazon
+"Women's Vertical Tote Monogram FL Canv, One Size"
+5.0 out of 5 stars
+FREE Delivery by Amazon
+s.Oliver (Bags)
+"Women's 201.10.108.25.300.2103513 Shoppers, One Size"
+FREE Delivery by Amazon
+s.Oliver (Bags)
+"Women's 201.10.109.30.300.2105369 Shopper, 79S1, 1"
+FREE Delivery by Amazon
+Dockers by Gerli
+"Women's 49YA203 Mid Calf Boot, Black, 3.5 UK"
+FREE Delivery by Amazon
+Women's Barrel Jeans
+5.0 out of 5 stars
+FREE Delivery by Amazon
+Women's Hazoi Slacks
+FREE Delivery by Amazon
+Women's Hularia Slacks
+FREE Delivery by Amazon
+Women's Oberkampf Dress Pants
+FREE Delivery by Amazon
+Women's Blazer
+FREE Delivery by Amazon
++6 colours/patterns
+Vero Moda
+Women's Vmlea Ls V-Neck Cuff Cardigan Noos Sweater
+Eligible for FREE UK/ROI Delivery
+"Women's AME_ALEJANDRIA Jacket, Black, 14 UK"
+FREE Delivery by Amazon
+Q/S designed by - s.Oliver
+Women's Blouse
+5.0 out of 5 stars
+FREE Delivery by Amazon
+Women's Belt
+FREE Delivery by Amazon
+Women's Trouser
+FREE Delivery by Amazon
++1 colours/patterns
+Calvin Klein
+Women's Leather Gloves
+5.0 out of 5 stars
+FREE Delivery by Amazon
++3 colours/patterns
+Vero Moda
+Women's Vmlea Ls Highneck Blouse Noos Pullover Sweater
+FREE Delivery by Amazon
+G-STAR RAW
+Women's Naval Overshirt
+5.0 out of 5 stars
+FREE Delivery by Amazon
+Do you need help?
+Visit the help section
+contact us
+Go back to filtering menu
+Skip to main search results
+Eligible for free delivery
+Free UK Delivery by Amazon
+FREE Delivery on orders over £10 for books or over £20 for other categories shipped by Amazon
+New Season
+Luggage & Travel Gear
+Sport Specific Clothing
+Avg. Customer Review
+1 Star & Up
+& Up
+2 Stars & Up
+& Up
+3 Stars & Up
+& Up
+4 Stars & Up
+& Up
+Featured Brands
+The Drop
+United Colors of Benetton
+£50 to £200
+£25 to £50
+"£200 to £1,000"
+Up to £25
+Brand Edits
+Popular Brands
+Premium Brands
+New Arrivals
+Last 3 Months
+Last Month
+Stainless Steel
+Global Store
+Amazon Global Store
+International Shipping
+International Shipping Eligible
+Casulo GS DE-UK Shadow
+Amazon EU
+Shopping Factory
+fashion group
+Harssidanzar Store
+Include Out of Stock
+"P.declare('sp.load.js', null);"
+"P.declare('s\-aapi\-ajax\-config', {""marketplaceId"":""A1F83G8C2ARO7P"",""marketplaceLocale"":""en\-GB"",""ajaxEndpoint"":""https:\/\/data.amazon.co.uk""});"
+"window.uet && uet('bb', 'searchSafeFrame:modal:s-safe-modal-singleton', {wb: 1});"
+"window.uet && uet('be', 'searchSafeFrame:modal:s-safe-modal-singleton', {wb: 1});"
+"window.$Nav && $Nav.declare('config.flyoutURL', null);  window.$Nav && $Nav.declare('btf.lite');  window.$Nav && $Nav.declare('btf.full');  window.$Nav && $Nav.declare('btf.exists');  (window.AmazonUIPageJS ? AmazonUIPageJS : P).register('navCF');"
+(window.AmazonUIPageJS ? AmazonUIPageJS : P).when('navCF').execute(function(){  (window.AmazonUIPageJS ? AmazonUIPageJS : P).load.js('https://images-eu.ssl-images-amazon.com/images/I/11VbV%2B%2BKhQL.js?AUIClients/RetailWebsiteOverlayAUIAssets');});
+Your recently viewed items and featured recommendations
+View or edit your browsing history
+"After viewing product detail pages, look here to find an easy way to navigate back to pages you are interested in."
+Your recently viewed items and featured recommendations
+View or edit your browsing history
+"After viewing product detail pages, look here to find an easy way to navigate back to pages you are interested in."
+Back to top
+Get to Know Us
+About Us
+UK Modern Slavery Statement
+Make Money with Us
+Sell on Amazon
+Sell on Amazon Business
+Sell on Amazon Handmade
+Sell on Amazon Launchpad
+Associates Programme
+Fulfilment by Amazon
+Seller Fulfilled Prime
+Advertise Your Products
+Independently Publish with Us
+Amazon Pay
+Host an Amazon Hub
+See More Make Money with Us
+Amazon Payment Methods
+Amazon Platinum Mastercard
+Amazon Classic Mastercard
+Amazon Money Store
+Gift Cards
+Amazon Currency Converter
+Payment Methods Help
+Shop with Points
+Top Up Your Account
+Top Up Your Account in Store
+Let Us Help You
+COVID-19 and Amazon
+Track Packages or View Orders
+Delivery Rates & Policies
+Amazon Prime
+Returns & Replacements
+Manage Your Content and Devices
+Amazon Mobile App
+Amazon Assistant
+Customer Service
+United Arab Emirates
+United States
+Amazon Music
+Stream millions
+of songs
+"Books, art"
+& collectables
+Audiobook Publishing
+Made Easy
+Amazon Web Services
+Scalable Cloud
+Computing Services
+Download Audiobooks
+Book Depository
+Books With Free
+Delivery Worldwide
+Book reviews
+& recommendations
+Amazon Home Services
+Experienced pros
+Happiness Guarantee
+"Movies, TV"
+& Celebrities
+Kindle Direct Publishing
+Indie Digital & Print Publishing
+Made Easy
+Fashion Brands
+Amazon Warehouse
+Deep Discounts
+Open-Box Products
+Amazon Business
+Service for
+business customers
+Whole Foods Market
+We Believe in
+Real Food
+Amazon Second Chance
+"Pass it on, trade it in,"
+give it a second life
+Conditions of Use & Sale
+Privacy Notice
+Cookies Notice
+Interest-Based Ads Notice
+"© 1996-2021, Amazon.com, Inc. or its affiliates"
+"(function(a,b){a.attachEvent?a.attachEvent(""onload"",b):a.addEventListener&&a.addEventListener(""load"",b,!1)})(window,function(){setTimeout(function(){var el=document.getElementById(""sis_pixel_r2"");el&&(el.innerHTML='<iframe id=""DAsis"" src=""//aax-eu.amazon-adsystem.com/s/iu3?d=amazon.co.uk&slot=navFooter&old_oo=0&ts=1634157584977&s=AVg-bnTX3xvoV0A5T_nLLKp84f9itRwxgYX-TqIjjYjh&cb=1634157584977"" width=""1"" height=""1"" frameborder=""0"" marginwidth=""0"" marginheight=""0"" scrolling=""no""></iframe>')},300)});"
+(window.AmazonUIPageJS ? AmazonUIPageJS : P).load.js('https://images-eu.ssl-images-amazon.com/images/I/11Fc+f7G4QL.js?AUIClients/PRIVCONAssets-body');
+"window.ue && ue.count && ue.count('CSMLibrarySize', 77290)"
