@@ -59,8 +59,14 @@ eg:
 ```
 
 Prerequisite & dependencies
+
+
 Python 3.9
+
+
 Pip
+
+
 [Awsebcli](https://docs.aws.amazon.com/zh_cn/elasticbeanstalk/latest/dg/eb-cli3-install-windows.html)
 
 
