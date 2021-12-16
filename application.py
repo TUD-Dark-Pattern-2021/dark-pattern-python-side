@@ -36,7 +36,7 @@ import shortuuid
 from PIL import Image
 import pytesseract
 import os
-import cv2
+#import cv2
 
 application = Flask(__name__)
 
@@ -133,12 +133,13 @@ def parse():
             for line in all_urls:
                 a = a + 1
                 #(debug) if url has http domain rather than https
-                if 'http' in line:
-                    #line = "https:" + line
+                if 'http' not in line:
+                    line = "https:" + line
 
                     print(line)
 
-                #try:
+                try:
+                    '''
                     img_resp = urllib.request.urlopen(line)
                     img = np.asarray(bytearray(img_resp.read()), dtype='uint8')
                     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
@@ -153,14 +154,14 @@ def parse():
                     itext = image_text(image_path)
 
                     os.remove(image_path)
-                    '''
-                    itext = image_text(img)
+
+                    #itext = image_text(img)
 
                     urlss2['content'][a] = itext
                     print(itext)
                     print('itextwork')
-                #except:
-                    #continue
+                except:
+                    continue
 
             urlss2["content"] = urlss2["content"].map(lambda x: x.split('\n'))
             urlsss = urlss2.explode("content")
