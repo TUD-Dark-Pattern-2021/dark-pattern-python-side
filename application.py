@@ -110,7 +110,7 @@ def parse():
         urlss3 = urlss.drop_duplicates(['content'])
         urlss2 = urlss3.reset_index(drop=True)
         print(urlss2)
-        print('work')
+        print('working')
         urls = urlss2['content']
         #print(urls)
 
@@ -133,12 +133,12 @@ def parse():
             for line in all_urls:
                 a = a + 1
                 #(debug) if url has http domain rather than https
-                if 'http' not in line:
-                    line = "https:" + line
+                if 'http' in line:
+                    #line = "https:" + line
 
-                #print(line)
+                    print(line)
 
-                try:
+                #try:
                     r = requests.get(line)
                     image_name = 'image.jpg'
                     image_path = "./" + image_name
@@ -154,9 +154,9 @@ def parse():
 
                     urlss2['content'][a] = itext
                     print(itext)
-
-                except:
-                    continue
+                    print('itextwork')
+                #except:
+                    #continue
 
             urlss2["content"] = urlss2["content"].map(lambda x: x.split('\n'))
             urlsss = urlss2.explode("content")
